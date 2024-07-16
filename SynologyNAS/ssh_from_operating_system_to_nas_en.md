@@ -23,7 +23,7 @@ First of all, we need a terminal program to access the console of our Windows, L
 
     _(Option **a** = also shows hidden files and folders beginning with a dot)_
 
-- Create a new, hidden folder with the name .ssh and assign folder rights**
+- **Create a new, hidden folder with the name .ssh and assign folder rights**
 
     `mkdir -p ~/.ssh`
   
@@ -33,7 +33,7 @@ First of all, we need a terminal program to access the console of our Windows, L
 
     The **tilde** symbol (**~**) in the Linux file system represents the current user's home directory. It is a shorthand notation that allows users to point to their own home directory without having to enter the full path.
 
-- Create **RSA key pair**
+- **Create RSA key pair**
 
     By simply entering the command **ssh-keygen**, different encryption algorithms can be used depending on the configuration. Therefore, always specify which algorithm you want to use.
 
@@ -45,7 +45,7 @@ First of all, we need a terminal program to access the console of our Windows, L
 
     _(**-f** stands for the folder path and file name to be used. The default file name id_rsa is used here as an example)_
 
-- Output the content of the public key**
+- **Output the content of the public key**
 
     `cat ~/.ssh/id_rsa.pub`
 
@@ -59,7 +59,7 @@ First of all, we need a terminal program to access the console of our Windows, L
 
     _(Command **>>** file = append standard output of the command to the target file.)_
 
-- Set folder and file permissions**
+- **Set folder and file permissions**
 
     With **chmod** you can change the access rights of folders and files.
 
@@ -89,7 +89,7 @@ First of all, we need a terminal program to access the console of our Windows, L
 
     _(You are in the user home folder of your administrator under /var/services/homes/[USER] or /volume1/homes/[USER)_
 
-- Create a new, hidden folder with the name .ssh and assign folder rights**.
+- **Create a new, hidden folder with the name .ssh and assign folder rights**
     `mkdir -p ~/.ssh`
 
     `chmod 0700 ~/.ssh`
@@ -98,7 +98,7 @@ First of all, we need a terminal program to access the console of our Windows, L
 
 ## Back on your Windows, Linux, Mac or Whatever computer
 
-- Append the contents of the id_rsa.pub file to the authorized_keys file via an SSH connection to your Synology NAS**
+- **Append the contents of the id_rsa.pub file to the authorized_keys file via an SSH connection to your Synology NAS**
 
     `cat ~/.ssh/id_rsa.pub | ssh -p [PORT] [USER]@[NAS-IP] “cat >> ~/.ssh/authorized_keys”`
 
@@ -120,7 +120,7 @@ First of all, we need a terminal program to access the console of our Windows, L
 
     _(Enter the administrator's password repeatedly and perform a handshake)_
 
-- Where am I anyway**
+- **Where am I anyway**
 
     `pwd`
 
