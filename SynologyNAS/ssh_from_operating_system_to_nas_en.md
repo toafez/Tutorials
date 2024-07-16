@@ -90,6 +90,7 @@ First of all, we need a terminal program to access the console of our Windows, L
     _(You are in the user home folder of your administrator under /var/services/homes/[USER] or /volume1/homes/[USER)_
 
 - **Create a new, hidden folder with the name .ssh and assign folder rights**
+  
     `mkdir -p ~/.ssh`
 
     `chmod 0700 ~/.ssh`
