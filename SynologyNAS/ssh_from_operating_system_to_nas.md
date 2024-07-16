@@ -1,3 +1,5 @@
+[English](ssh_from_operating_system_to_nas_en.md) | Deutsch
+
 ### Dieses Tutorial enthält die ergänzende Videobeschreibung meines YouTube Videos... ###
 # **[SSH Public Key Verbindung zu einem Synology NAS einrichten](https://youtu.be/VjoWjX_8E3Q)** #
 
