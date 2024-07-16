@@ -1,4 +1,4 @@
 # Tutorials
 
 ## Synology NAS ##
-- Videobeschreibung zum meinem YouTube Video [SSH Public Key Verbindung zu einem Synology NAS einrichten](https://youtu.be/VjoWjX_8E3Q)
+- **[Videobeschreibung](ssh_from_operating_system_to_nas.md)** zum meinem YouTube Video [SSH Public Key Verbindung zu einem Synology NAS einrichten](https://youtu.be/VjoWjX_8E3Q)
