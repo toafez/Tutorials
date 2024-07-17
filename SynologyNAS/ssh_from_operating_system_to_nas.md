@@ -73,7 +73,7 @@ Wir benötigen zunächst einmal ein Terminal Programm um uns auf die Konsole uns
 
     **Hinweis:** Aktiviere auf deinem Synology NAS im Vorfeld bitte den SSH Terminal-Dienst sowie den Benutzer-Home-Dienst.
 
-    **Syntax:** ssh -p \[PORT\] \[BENUTZER\]@\[NAS-IP\]
+    **Syntax:** ssh -p [PORT] [BENUTZER]@[NAS-IP]
 
     **Beispiel:** `ssh -p 22 tommes@172.16.1.11`
 
@@ -87,7 +87,7 @@ Wir benötigen zunächst einmal ein Terminal Programm um uns auf die Konsole uns
 
     _(Print Working Directory)_
 
-    _(Du befindest dich im Benutzer-Home-Ordner deines Administrators unter /var/services/homes/tommes bzw. /volume1/homes/tommes)_
+    _(Du befindest dich im Benutzer-Home-Ordner deines Administrators unter /var/services/homes/[BENUTZER] bzw. /volume1/homes/[BENUTZER])_
 
 - **Einen neuen, versteckten Ordner mit dem Namen .ssh anlegen und Ordnerrechte vergeben**
 
