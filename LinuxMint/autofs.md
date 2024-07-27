@@ -27,11 +27,11 @@ Wird für die Freigabe ein Passwort benötigt, muss eine versteckte Textdatei mi
     
 ## Die Master-Map-Datei
 
-- Mountpoint festlegen, wohin die Freigaben gemountet werden sollen
+- Mountpoint festlegen, wohin die Freigaben gemountet werden sollen  
     `sudo mkdir /media/[BENUTZERNAME]/Fileserver`  
 
 - Am Ende der Datei /etc/auto.master folgende Zeile eintragen  
-    ***Syntax:** \[mountpoint\] \[Map-Datei\] \[options\]*
+    ***Syntax:** \[mountpoint\] \[Map-Datei\] \[options\]*  
     `/media/[BENUTZERNAME]/Fileserver /etc/auto.fileserver --timeout=0 --ghost`
 
 ## Die Map-Datei
