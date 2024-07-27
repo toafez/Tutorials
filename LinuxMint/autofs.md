@@ -50,8 +50,8 @@ Wird für die Freigabe ein Passwort benötigt, muss eine versteckte Textdatei mi
 - Inhalt der Datei /etc/auto.\[DATEINAME\]  
     ***Syntax:** \[FREIGABE-NAME\] -fstype=cifs,\[OPTIONEN\] ://\[IP-ADRESSE\]/\[FREIGABE-PFAD\]*  
     ```
-    [FREIGABE-NAME] -fstype=cifs,uid=1000,credentials=/home/[BENUTZERNAME]/.smbcredentials ://[IP-ADRESSE]/[FREIGABE-PFAD]
-    [FREIGABE-NAME] -fstype=cifs,uid=1000,credentials=/home/[BENUTZERNAME]/.smbcredentials ://[IP-ADRESSE]/[FREIGABE-PFAD]
+    [FREIGABE-NAME] -fstype=cifs,credentials=/home/[BENUTZERNAME]/.smbcredentials ://[IP-ADRESSE]/[FREIGABE-PFAD]
+    [FREIGABE-NAME] -fstype=cifs,credentials=/home/[BENUTZERNAME]/.smbcredentials ://[IP-ADRESSE]/[FREIGABE-PFAD]
     ```
 
 Weitere Informationen zu autofs findet ihr unter https://wiki.ubuntuusers.de/Autofs/
