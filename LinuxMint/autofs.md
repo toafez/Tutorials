@@ -32,7 +32,7 @@ Wird für die Freigabe ein Passwort benötigt, muss eine versteckte Textdatei mi
 
 - Am Ende der Datei /etc/auto.master folgende Zeile eintragen  
     ***Syntax:** \[mountpoint\] \[Map-Datei\] \[options\]*  
-    `/media/[BENUTZERNAME]/Fileserver /etc/auto.fileserver --timeout=0 --ghost`
+    `/media/[BENUTZERNAME]/[MOUNTPOINT] /etc/auto.[DATEINAME] --timeout=0 --ghost`
 
 ## Die Map-Datei
 
