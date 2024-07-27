@@ -27,12 +27,12 @@ If a password is required for sharing, a hidden text file with the name .smbcred
     
 ## The master map file
 
-- Specify the mount point where the shares should be mounted
-    `sudo mkdir /media/[USERNAME]/Fileserver`  
+- Specify the mount point where the shares should be mounted  
+    `sudo mkdir -p /media/[USERNAME]/[MOUNTPOINT]`  
 
 - Enter the following line at the end of the /etc/auto.master file  
-    ***Syntax:** \[mountpoint\] \[map-file\] \[options\]*
-    `/media/[USERNAME]/fileserver /etc/auto.fileserver --timeout=0 --ghost`
+    ***Syntax:** \[mountpoint\] \[map-file\] \[options\]*  
+    `/media/[USERNAME]/[MOUNTPOINT] /etc/auto.[FILENAME] --timeout=0 --ghost`
 
 ## The map file
 
@@ -43,15 +43,15 @@ If a password is required for sharing, a hidden text file with the name .smbcred
     `sudo nano /etc/auto.[FILENAME]`  
 
 - Remove the executability of a file /etc/auto.\[FILENAME\]  
-    `sudo chmod -x /etc/auto.[filename]`
+    `sudo chmod -x /etc/auto.[FILENAME]`
 
      **Attention:** Files with this structure must not be marked as executable.
 
 - Contents of the file /etc/auto.\[FILENAME\]  
-    ***Syntax:** \[FREIGABE-NAME\] -fstype=cifs,\[OPTIONEN\] ://\[IP-ADRESSE\]/\[FREIGABE-PFAD\]*  
+    ***Syntax:** \[SHARENAME\] -fstype=cifs,\[OPTIONS\] ://\[IP-ADRESSE\]/\[SHAREPATH\]*  
     ```
-    [RELEASE-NAME] -fstype=cifs,credentials=/home/[USERNAME]/.smbcredentials ://[IP-ADRESS]/[RELEASE-PATH]
-    [RELEASE-NAME] -fstype=cifs,credentials=/home/[USERNAME]/.smbcredentials ://[IP-ADRESS]/[RELEASE-PATH]
+    [SHARENAME] -fstype=cifs,credentials=/home/[USERNAME]/.smbcredentials ://[IP-ADRESS]/[SHAREPATH]
+    [SHARENAME] -fstype=cifs,credentials=/home/[USERNAME]/.smbcredentials ://[IP-ADRESS]/[SHAREPATH]
     ```
 
 You can find more information about autofs at https://wiki.ubuntuusers.de/Autofs/
