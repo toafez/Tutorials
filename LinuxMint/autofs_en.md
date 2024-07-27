@@ -50,8 +50,8 @@ If a password is required for sharing, a hidden text file with the name .smbcred
 - Contents of the file /etc/auto.\[FILENAME\]  
     ***Syntax:** \[SHARENAME\] -fstype=cifs,\[OPTIONS\] ://\[IP-ADDRESS\]/\[SHAREPATH\]*  
     ```
-    [SHARENAME] -fstype=cifs,credentials=/home/[USERNAME]/.smbcredentials ://[IP-ADDRESS]/[SHAREPATH]
-    [SHARENAME] -fstype=cifs,credentials=/home/[USERNAME]/.smbcredentials ://[IP-ADDRESS]/[SHAREPATH]
+    [SHARENAME] -fstype=cifs,uid=1000,credentials=/home/[USERNAME]/.smbcredentials ://[IP-ADDRESS]/[SHAREPATH]
+    [SHARENAME] -fstype=cifs,uid=1000,credentials=/home/[USERNAME]/.smbcredentials ://[IP-ADDRESS]/[SHAREPATH]
     ```
 
 You can find more information about autofs at https://wiki.ubuntuusers.de/Autofs/
