@@ -1,4 +1,4 @@
-[English](https://github.com/toafez/Tutorials/blob/main/folder_encryption_with_user_rights_en.md) | Deutsch
+[English](folder_encryption_with_user_rights_en.md) | Deutsch
 
 ## Einhängen und trennen verschlüsselter Ordner als DSM-Benutzer
 Mit dem hier vorgestellten Überwachungsscript lassen sich verschlüsselte Ordner auf auf deinem Synology-NAS auch von Benutzern einhängen und trennen, die nicht der Gruppe der Administratoren angehören.
