@@ -71,7 +71,7 @@ eventfile=$(echo ${eventpath}/EVENTFILE.txt)
 if [ -d "${eventpath}" ]; then
 	if [ ! -f "${eventfile}" ]; then
 	    touch "${eventfile}"
-        chown "${user}":"users" "${eventfile}"
+            chown "${user}":"users" "${eventfile}"
 	    echo "value" > "${eventfile}"
 	fi
 else
