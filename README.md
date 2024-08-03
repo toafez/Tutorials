@@ -5,7 +5,7 @@
 
 ## Synology NAS
 - [Videobeschreibung](SynologyNAS/ssh_from_os_to_nas.md) zum meinem YouTube Video [SSH Public Key Verbindung zu einem Synology NAS einrichten](https://youtu.be/VjoWjX_8E3Q)
-- [Einhängen und trennen verschlüsselter Ordner als DSM-Benutzer](folder_encryption_with_user_rights.md)
+- [Einhängen und trennen verschlüsselter Ordner als DSM-Benutzer](SynologyNAS/folder_encryption_with_user_rights.md)
 
 ## Linux Mint
 - **[Autofs](LinuxMint/autofs.md)** für den Zugriff auf Freigaben eines Synology NAS und weiterer Remote-Server
