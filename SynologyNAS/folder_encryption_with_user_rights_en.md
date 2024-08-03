@@ -24,7 +24,7 @@ Freely definable "**trigger values**" for mounting and unmounting encrypted fold
     - Log in to the DSM of your Synology NAS as **Adminstrator**.
     - Open the Task Scheduler in DSM under **Main Menu > Control Panel**.
     - Select the **Create > Scheduled task > Custom script** button in the task scheduler.
-    - In the pop-up window that now opens, give the task an individual name in the **General > General settings** tab and select **root** as the user.
+    - In the pop-up window that now opens, give the task an individual name in the **General > General settings** tab and select **root** as the user. Then remove the tick next to **Activated**.
     - Then add the **monitoring script** to the text field in the **Task settings > Execute command > Custom script** tab...
     - Confirm your entries with the **OK** button and accept the subsequent warning message with **OK**.
     - To add the task to the task planner, you must then enter the password of the user currently logged in to DSM and confirm the process by clicking the Send button.
