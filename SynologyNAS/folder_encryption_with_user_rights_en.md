@@ -95,7 +95,7 @@ if [ -f "${eventfile}" ]; then
         elif [ $(cat "${event}") == "${exit_trigger}" ]; then
             pid=$(ps aux | grep -v "grep" | grep -E "inotifywait.*--format.*${eventfile}.*close_write" | awk -F' ' '{print $2}')
             kill ${pid}
-        	exit 0     
+            exit 0     
         fi
     done
 else
