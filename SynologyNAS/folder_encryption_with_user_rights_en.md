@@ -85,12 +85,12 @@ if [ -f "${eventfile}" ]; then
         if [ $(cat "${event}") == "${decrypt_trigger}" ]; then
             if [ -n "/volume[[:digit:]]/@${share}@" ] && [ -n "${password}" ]; then
                 /usr/syno/sbin/synoshare --enc_mount ${share} ${password}
-                echo "Der verschlüsselte Ordner [ ${share} ] wurde eingehängt."
+                echo "The encrypted folder [ ${share} ] has been mounted."
             fi
         elif [ $(cat "${event}") == "${encrypt_trigger}" ]; then
             if [ -n "/volume[[:digit:]]/${share}" ]; then
                 /usr/syno/sbin/synoshare --enc_unmount ${share}
-                echo "Der verschlüsselte Ordner [ ${share} ] wurde getrennt."
+                echo "The encrypted folder [ ${share} ] has been disconnected."
             fi
         elif [ $(cat "${event}") == "${exit_trigger}" ]; then
             pid=$(ps aux | grep -v "grep" | grep -E "inotifywait.*--format.*${eventfile}.*close_write" | awk -F' ' '{print $2}')
