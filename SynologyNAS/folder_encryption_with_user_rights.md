@@ -24,7 +24,7 @@ Innerhalb der "Ereignisdatei" werden dabei frei definierbare "**Auslösewerte**"
     - Melde dich als **Adminstrator** am DSM deines Synology-NAS an.
     - Öffne im DSM unter **Hauptmenü > Systemsteuerung** den Aufgabenplaner.
     - Wähle im Aufgabenplaner über die Schaltfläche **Erstellen > Geplante Aufgabe > Benutzerdefiniertes Script** aus.
-    - In dem sich nun öffnenden Pop-up-Fenster gibst du im Reiter **Allgemein > Allgemeine Einstellungen** der Aufgabe einen individuellen Namen und wählst als Benutzer **root** aus.
+    - In dem sich nun öffnenden Pop-up-Fenster gibst du im Reiter **Allgemein > Allgemeine Einstellungen** der Aufgabe einen individuellen Namen und wählst als Benutzer **root** aus. Anschließend entfernst du noch den Haken bei **Aktiviert**.
     - Füge anschließend im Reiter **Aufgabeneinstellungen > Befehl ausführen > Benutzerdefiniertes Script** das **Überwachungsscript** in das Textfeld ein...
     - Bestätige deine Eingaben mit die Schaltfläche **OK** und akzeptiere die anschließende Warnmeldung ebenfalls mit **OK**.
     - Damit die Aufgabe dem Aufgabenplaner hinzugefügt wird, musst du abschließend das Passwort deines aktuell am DSM angemeldeten Benutzers eingeben und den Vorgang über die Schaltfläche Senden bestätigen.
