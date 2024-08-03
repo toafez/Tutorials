@@ -1,4 +1,4 @@
-English | [Deutsch](https://github.com/toafez/Tutorials/blob/main/folder_encryption_with_user_rights.md)
+English | [Deutsch](folder_encryption_with_user_rights.md)
 
 ## Mount and unmount encrypted folders as DSM user
 With the monitoring script presented here, encrypted folders on your Synology NAS can also be mounted and unmounted by users who do not belong to the administrators group.
