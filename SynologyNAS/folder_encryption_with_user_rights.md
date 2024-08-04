@@ -6,7 +6,7 @@ Mit dem hier vorgestellten Überwachungsscript lassen sich verschlüsselte Ordne
 ## Arbeitsweise des Überwachungsscripts
 Nach der **einmaligen Ausführung** des **Überwachungsscripts** über den **DSM-Aufgabenplaner** als Benutzer "**root**" wird zunächst **im Wurzelverzeichnis** eines zuvor bestimmten **Benutzer-Home-Ordners** geprüft, ob bereits eine sogenannte "**Ereignisdatei**" existiert. Wurde keine "Ereignisdatei" gefunden, wird diese durch das Script mit einen frei definierbaren Dateinamen erstellt. Im Anschluss daran wird die "Ereignisdatei" durch das Überwachungsscript auf **abgespeicherte Inhaltsänderungen** hin **überwacht**.
 
-Innerhalb der "Ereignisdatei" werden dabei frei definierbare "**Auslösewerte**" für das einhängen und trennen verschlüsselter Ordner sowie für die Beendigung der Überwachung **hineingeschrieben**. Wird nach dem abspeichern ein gültiger Auslösewert von dem Überwachungsscript erkannt, erfolgt eine entsprechende Aktion.
+Innerhalb der "Ereignisdatei" werden dabei frei definierbare "**Auslösewerte**" für das einhängen und trennen verschlüsselter Ordner sowie für die Beendigung der Überwachung **hineingeschrieben**. Wird nach dem abspeichern ein gültiger Auslösewert von dem Überwachungsscript erkannt, erfolgt eine entsprechende Aktion. Die Überwachung sowie das Überwachungsscript selbst kann durch einen weiteren Auslösebefehl beendet werden. In dem Fall wird auch die Ereignisdatei gelöscht.  
 
 ## Insallationshinweise
 - ### Benutzer-Home-Dienst aktivieren   
