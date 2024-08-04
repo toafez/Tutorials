@@ -1,6 +1,4 @@
-[English](folder_encryption_with_user_rights_en.md) | Deutsch
-
-***Version 0.1 vom 03.08.2024***
+***Version 0.20 vom 04.08.2024***
 
 ## Einhängen und trennen verschlüsselter Ordner als DSM-Benutzer
 Mit dem hier vorgestellten Überwachungsscript lassen sich verschlüsselte Ordner auf auf deinem Synology-NAS auch von Benutzern einhängen und trennen, die nicht der Gruppe der Administratoren angehören.
@@ -9,8 +7,6 @@ Mit dem hier vorgestellten Überwachungsscript lassen sich verschlüsselte Ordne
 Nach der **einmaligen Ausführung** des **Überwachungsscripts** über den **DSM-Aufgabenplaner** als Benutzer "**root**" wird zunächst **im Wurzelverzeichnis** eines zuvor bestimmten **Benutzer-Home-Ordners** geprüft, ob bereits eine sogenannte "**Ereignisdatei**" existiert. Wurde keine "Ereignisdatei" gefunden, wird diese durch das Script mit einen frei definierbaren Dateinamen erstellt. Im Anschluss daran wird die "Ereignisdatei" durch das Überwachungsscript auf **abgespeicherte Inhaltsänderungen** hin **überwacht**.
 
 Innerhalb der "Ereignisdatei" werden dabei frei definierbare "**Auslösewerte**" für das einhängen und trennen verschlüsselter Ordner sowie für die Beendigung der Überwachung **hineingeschrieben**. Wird nach dem abspeichern ein gültiger Auslösewert von dem Überwachungsscript erkannt, erfolgt eine entsprechende Aktion.
-
-**Wichtiger Hinweis:** Das Editieren der "Ereignisdatei" ist nur über den DSM Text-Editor möglich.
 
 ## Insallationshinweise
 - ### Benutzer-Home-Dienst aktivieren   
@@ -71,33 +67,39 @@ eventpath=$(echo /volume[[:digit:]]/homes/${user})
 eventfile=$(echo ${eventpath}/EVENTFILE.txt)
 
 if [ -d "${eventpath}" ]; then
-	if [ ! -f "${eventfile}" ]; then
-	    touch "${eventfile}"
-            chown "${user}":"users" "${eventfile}"
-	    echo "value" > "${eventfile}"
-	fi
+    if [ ! -f "${eventfile}" ]; then
+        touch "${eventfile}"
+        chown "${user}":"users" "${eventfile}"
+        echo "value" > "${eventfile}"
+        echo "Die Ereignisdatei [ ${eventfile} ] wurde erstellt."
+    fi
 else
-	exit 1
+    exit 1
 fi
 
 if [ -f "${eventfile}" ]; then
     echo "Überwachung läuft..."
-    inotifywait -mq --format %w%f ${eventfile} -e close_write | while read event
-    do
-        if [ $(cat "${event}") == "${decrypt_trigger}" ]; then
-            if [ -n "/volume[[:digit:]]/@${share}@" ] && [ -n "${password}" ]; then
-                /usr/syno/sbin/synoshare --enc_mount ${share} ${password}
-                echo "Der verschlüsselte Ordner [ ${share} ] wurde eingehängt."
+    inotifywait -mq ${eventpath} -e close_write,moved_to |
+    while read path action file; do
+        if [[ "${path}${file}" == "${eventfile}" ]]; then
+            if [ $(cat "${eventfile}") == "${decrypt_trigger}" ]; then
+                if [ -n "/volume[[:digit:]]/@${share}@" ] && [ -n "${password}" ]; then
+                    /usr/syno/sbin/synoshare --enc_mount ${share} ${password}
+                    echo "Der verschlüsselte Ordner [ ${share} ] wurde eingehängt."
+                fi
+            elif [ $(cat "${eventfile}") == "${encrypt_trigger}" ]; then
+                if [ -n "/volume[[:digit:]]/${share}" ]; then
+                    /usr/syno/sbin/synoshare --enc_unmount ${share}
+                    echo "Der verschlüsselte Ordner [ ${share} ] wurde getrennt."
+                fi
+            elif [ $(cat "${eventfile}") == "${exit_trigger}" ]; then
+                pid=$(ps aux | grep -v "grep" | grep -E "inotifywait.*${eventpath}.*close_write,moved_to" | awk -F' ' '{print $2}')
+                kill ${pid}
+                rm "${eventfile}"
+                echo "Die Überwachung sowie das Überwachungsscript wurde beendet."
+                echo "Die Ereignisdatei [ ${eventfile} ] wurde gelöscht."
+            	exit 0     
             fi
-        elif [ $(cat "${event}") == "${encrypt_trigger}" ]; then
-            if [ -n "/volume[[:digit:]]/${share}" ]; then
-                /usr/syno/sbin/synoshare --enc_unmount ${share}
-                echo "Der verschlüsselte Ordner [ ${share} ] wurde getrennt."
-            fi
-        elif [ $(cat "${event}") == "${exit_trigger}" ]; then
-            pid=$(ps aux | grep -v "grep" | grep -E "inotifywait.*--format.*${eventfile}.*close_write" | awk -F' ' '{print $2}')
-            kill ${pid}
-            exit 0     
         fi
     done
 else
