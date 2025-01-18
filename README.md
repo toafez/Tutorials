@@ -8,6 +8,10 @@ Deutsch | [English](README_en.md)
   - [HowTo: SMB Netzwerk-Freigaben mit Autofs](https://github.com/toafez/HowTo_Linux.SMB.Autofs)
 - #### Secure Shell (SSH)
   - [HowTo: SSH-Key im Linux Terminal](https://github.com/toafez/HowTo_Linux.SSH.Terminal)
+ 
+### Synology HowTo's
+- #### Benutzerverwaltung
+  - [HowTo: Der Benutzer-Home-Dienst des Synology DiskStation Managers](https://github.com/toafez/HowTo_Syno.DSM.User.Home)
 
 ### Windows HowTo's
 - #### Secure Shell (SSH)
