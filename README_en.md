@@ -12,6 +12,8 @@ English | [Deutsch](README.md)
 ### Synology HowTo's
 - #### User management
   - [HowTo: The User Home Service of Synology DiskStation Manager](https://github.com/toafez/HowTo_Syno.DSM.User.Home/blob/main/README_en.md)
+- #### System
+  - [HowTo: Analyze and clean up a overfilled system partition on a Synology NAS](https://github.com/toafez/HowTo_Syno.SystemPartition/blob/main/README_en.md)
 
 ### Windows HowTo's
 - #### Secure Shell (SSH)
