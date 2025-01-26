@@ -12,6 +12,8 @@ Deutsch | [English](README_en.md)
 ### Synology HowTo's
 - #### Benutzerverwaltung
   - [HowTo: Der Benutzer-Home-Dienst des Synology DiskStation Managers](https://github.com/toafez/HowTo_Syno.DSM.User.Home)
+- #### Pakete
+  - [HowTo: AutoPilot - Herunterladen. Installieren. Einrichten.](https://github.com/toafez/HowTo_Syno.AutoPilot)
 - #### System
   - [HowTo: Analysieren und Bereinigen einer überfüllten Systempartition auf einem Synology NAS](https://github.com/toafez/HowTo_Syno.SystemPartition/tree/main)
 
