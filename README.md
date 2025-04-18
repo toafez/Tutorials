@@ -1,5 +1,3 @@
-Deutsch | [English](README_en.md)
-
 # HowTo's: Inhaltsverzeichnis
 
 ### Allgemeines
