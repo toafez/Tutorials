@@ -1,3 +1,5 @@
+[Zurück zum Inhaltsverzeichnis](https://github.com/toafez/Tutorials)
+
 # HowTo: SSH-Key mit PuTTYgen erstellen und in PuTTY einrichten
 
 ## Worum geht es?
@@ -70,29 +72,29 @@ Zur besseren Lesbarkeit werden alle folgenden Eingaben ohne die Verwendung des P
 
 1. Zuerst wird ein neues verstecktes Verzeichnis mit dem Namen .ssh im Home-Verzeichnis des aktuell angemeldeten Benutzers angelegt.
 
-    `mkdir .ssh`
+       mkdir .ssh
 
 2. Anschließend wird das soeben erstellte Verzeichnis mit den entsprechenden Rechten versehen.
 
-    `chmod 700 .ssh`
+       chmod 700 .ssh
 
 3. Wechsel nun in dieses Verzeichnis
 
-    `cd .ssh`
+       cd .ssh
 
 4. Der Prompt sollte an dieser Stelle das Verzeichnis als Bestätigung enthalten, was in etwa so aussehen sollte
 
-    `tommes@Ubuntu-Server:~/ssh$`
+       tommes@Ubuntu-Server:~/ssh$
 
 5. Weiter geht es mit dem vi-Editor der beim Aufruf die Datei authorized_keys erstellen bzw. bearbeiten soll.
 
-    `vi authorized_keys`
+       vi authorized_keys
 
     **Anmerkung:** An dieser Stelle wird es etwas knifflig, denn der vi-Editor ist zwar einer der beliebtesten Texteditoren unter Linux, aber in der Bedienung sehr gewöhnungsbedürftig. Daher sollten die folgenden Anweisungen genau befolgt werden. Wenn man sich irgendwo vertippt hat, sollte man am besten durch Drücken der **Escape-** bzw, **Esc**-Taste in den Befehlsmodus zurückkehren und das Dokument schließen, ohne zu speichern. Dies geschieht durch Eingabe von `:q!` Danach einfach wieder von vorne anfangen.
 
  6. Zunächst benötigst du noch den öffentlichen Schlüssel, den du am Anfang dieser Anleitung aus PuTTYgen kopiert und in einer Textdatei gespeichert hast. Öffne die Datei, markiere den öffentlichen Schlüssel, klicke mit der rechten Maustaste auf den markierten Text und kopiere den öffentlichen Schlüssel erneut in die Zwischenablage. Wechsle dann zurück zum Terminalfenster, um im vi-Editor vom Befehlsmodus in den Eingabemodus zu wechseln. Gib dazu einfach ein...
 
-    `i`
+        i
 
 7. ... ein, bewege den Mauszeiger in das Terminalfenster und drücke die rechte Maustaste. Dadurch wird der öffentliche Schlüssel aus der Zwischenablage in die geöffnete Datei authorized_keys des vi-Editors eingefügt. Das Ganze sollte ungefähr so aussehen...
 
@@ -100,11 +102,11 @@ Zur besseren Lesbarkeit werden alle folgenden Eingaben ohne die Verwendung des P
 
 8. Wenn alles gut aussieht, drücke die **Escape-** bzw, **Esc**-Taste um zurück in den Befehlsmodus wechseln und beende den vi-Editor durch die Eingabe von...
 
-    `:qw!`
+       :qw!
 
 9. Du solltest dich wieder auf der Konsole wiederfinden. Beende die Terminalsitzung indem du...
 
-    `exit`
+       exit
 
   ... eingibs. Das Terminalfenster sollte sich automtisch schließen.
 
@@ -132,3 +134,4 @@ Zur besseren Lesbarkeit werden alle folgenden Eingaben ohne die Verwendung des P
 
     ![SSH-Key_PuTTYgen_PuTTY_100](/images/SSH-Key_PuTTYgen_PuTTY_100.png)
 
+[Zurück zum Inhaltsverzeichnis](https://github.com/toafez/Tutorials)

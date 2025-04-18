@@ -1,3 +1,5 @@
+[Zurück zum Inhaltsverzeichnis](https://github.com/toafez/Tutorials)
+
 # HowTo: SSH-Key mit PuTTYgen erstellen und in WinSCP einrichten
 
 ## Worum geht es?
@@ -39,5 +41,4 @@ Das Programm WinSCP kann als Windows-Installer von der [WinSCP Download-Seite](h
 
     ![SSH-Key_PuTTYgen_WinSCP_070](/images/SSH-Key_PuTTYgen_WinSCP_070.png)
 
-
-
+[Zurück zum Inhaltsverzeichnis](https://github.com/toafez/Tutorials)
