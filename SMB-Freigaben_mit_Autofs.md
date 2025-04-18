@@ -1,6 +1,6 @@
 [Zurück zum Inhaltsverzeichnis](https://github.com/toafez/Tutorials)
 
-# HowTo: SMB Netzwerk-Freigaben mit Autofs
+# HowTo: SMB-Netzwerkfreigaben mit Autofs auf einer Debian-basierten Linux-Distribution
 
 ## Worum geht es?
 Die folgende Anleitung beschreibt die **Installation und Konfiguration** von **Autofs** zur dynamischen Einbindung von SMB-Netzwerkfreigaben auf einer **Debian-basierten Linux-Distribution**, genauer gesagt unter **Linux Mint**.
