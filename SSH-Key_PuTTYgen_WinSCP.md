@@ -3,7 +3,7 @@
 # HowTo: SSH-Key mit PuTTYgen erstellen und in WinSCP einrichten
 
 ## Worum geht es?
-Die folgende Anleitung baut auf meiner Anleitung [HowTo: SSH-Key mit PuTTY und PuTTYgen](https://github.com/toafez/HowTo_Windows.SSH.PuTTY.PuTTYgen) auf, in der bereits eine passwortfreie SSH-Public-Key-Authentifizierung von einem lokalen Linux-Client-Betriebsystem zu einem Linux-basierten Remote-Server beschrieben wurde. **Durch die Einbindung des** bereits mit PuTTYgen erzeugten **privaten Schlüssels in das Windows-Programm WinSCP kann** auch hier **ein passwortfreier Zugriff auf einen entfernten Linux-Server erfolgen**.
+Die folgende Anleitung baut auf meiner Anleitung [SSH-Key mit PuTTYgen erstellen und in PuTTY einrichten](https://github.com/toafez/Tutorials/blob/main/SSH-Key_PuTTYgen_PuTTY.md) auf, in der bereits eine passwortfreie SSH-Public-Key-Authentifizierung von einem lokalen Linux-Client-Betriebsystem zu einem Linux-basierten Remote-Server beschrieben wurde. **Durch die Einbindung des** bereits mit PuTTYgen erzeugten **privaten Schlüssels in das Windows-Programm WinSCP kann** auch hier **ein passwortfreier Zugriff auf einen entfernten Linux-Server erfolgen**.
 
 ## WinSCP installieren
 Das Programm WinSCP kann als Windows-Installer von der [WinSCP Download-Seite](https://winscp.net/eng/download.php) heruntergeladen werden.
@@ -17,7 +17,7 @@ Das Programm WinSCP kann als Windows-Installer von der [WinSCP Download-Seite](h
 
     ![SSH-Key_PuTTYgen_WinSCP_010](/images/SSH-Key_PuTTYgen_WinSCP_010.png)
 
-6. Wähle im rechten Abschnitt **SSH / Authentifizierung** und klicke dann im rechten Bereich **Authentifizierungsparameter / Datei mit privatem Schlüssel:** auf die gelb markierte Schaltfläche, um im Dateisystem nach dem privaten Schlüssel zu suchen, den du bereits nach meiner Anleitung [HowTo: SSH-Key mit PuTTY und PuTTYgen](https://github.com/toafez/HowTo_Windows.SSH.PuTTY.PuTTYgen) erstellt und an einem sicheren Ort gespeichert hast.
+6. Wähle im rechten Abschnitt **SSH / Authentifizierung** und klicke dann im rechten Bereich **Authentifizierungsparameter / Datei mit privatem Schlüssel:** auf die gelb markierte Schaltfläche, um im Dateisystem nach dem privaten Schlüssel zu suchen, den du bereits nach meiner Anleitung [SSH-Key mit PuTTYgen erstellen und in PuTTY einrichten](https://github.com/toafez/Tutorials/blob/main/SSH-Key_PuTTYgen_PuTTY.md) erstellt und an einem sicheren Ort gespeichert hast.
 
     ![SSH-Key_PuTTYgen_WinSCP_020](/images/SSH-Key_PuTTYgen_WinSCP_020.png)
 
