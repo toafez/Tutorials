@@ -1,11 +1,10 @@
 # HowTo's: Inhaltsverzeichnis
 
-### Allgemeines
-- #### Secure Shell (SSH)
-  - [HowTo: SSH-Key im Linux Terminal](https://github.com/toafez/HowTo_Linux.SSH.Terminal)
-  - [HowTo: SSH-Key mit der Windows PowerShell](https://github.com/toafez/HowTo_Windows.SSH.Powershell)
-  - [HowTo: SSH-Key mit PuTTY und PuTTYgen](https://github.com/toafez/HowTo_Windows.SSH.PuTTY.PuTTYgen)
-  - [HowTo: SSH-Key mit WinSCP für Windows](https://github.com/toafez/HowTo_Windows.SSH.WinSCP)
+### Secure Shell (SSH)
+- [SSH-Key auf der Linux Kommandozeile erstellen und einrichten](https://github.com/toafez/Tutorials/blob/main/SSH-Key_Linux_Kommandozeile.md)
+- [SSH-Key mit der Windows PowerShell erstellen und einrichten](https://github.com/toafez/Tutorials/blob/main/SSH-Key_Windows_PowerShell.md)
+- [SSH-Key mit PuTTYgen erstellen und in PuTTY einrichten](https://github.com/toafez/Tutorials/blob/main/SSH-Key_PuTTYgen_PuTTY.md)
+- [SSH-Key mit PuTTYgen erstellen und in WinSCP einrichten](https://github.com/toafez/Tutorials/blob/main/SSH-Key_PuTTYgen_WinSCP.md)
 
-- #### Netzwerkfreigaben
-  - [HowTo: SMB Netzwerk-Freigaben mit Autofs](https://github.com/toafez/HowTo_Linux.SMB.Autofs)
+### Netzwerkfreigaben
+- [SMB Netzwerk-Freigaben mit Autofs](https://github.com/toafez/Tutorials/blob/main/SMB-Freigaben_mit_Autofs.md)
