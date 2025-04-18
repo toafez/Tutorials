@@ -7,4 +7,4 @@
 - [SSH-Key mit PuTTYgen erstellen und in WinSCP einrichten](https://github.com/toafez/Tutorials/blob/main/SSH-Key_PuTTYgen_WinSCP.md)
 
 ### Netzwerkfreigaben
-- [SMB Netzwerk-Freigaben mit Autofs](https://github.com/toafez/Tutorials/blob/main/SMB-Freigaben_mit_Autofs.md)
+- [SMB-Netzwerkfreigaben mit Autofs auf einer Debian-basierten Linux-Distribution](https://github.com/toafez/Tutorials/blob/main/SMB-Freigaben_mit_Autofs.md)
