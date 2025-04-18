@@ -5,8 +5,6 @@
 ## Worum geht es?
 Die folgende Anleitung beschreibt die Einrichtung einer **SSH-Public-Key-Authentifizierung** mit Hilfe der Windows **PowerShell** von einem lokalen Windows-Client-Betriebssystem zu einem Linux-basierten Remote-Server.
 
-Die folgende Anleitung beschreibt die Einrichtung einer **SSH-Public-Key-Authentifizierung** auf der **Kommandozeile** von einem lokalen Linux-Client-Betriebssystem zu einem Linux-basierten Remote-Server.
-
 ## Einleitung
 Secure Shell, abgekürzt SSH, ist ein Netzwerkprotokoll zum Aufbau verschlüsselter Verbindungen zwischen Geräten im lokalen Netzwerk oder über das Internet. Bei der SSH-Public-Key-Authentifizierung wird mit Hilfe eines Schlüsselpaares, bestehend aus einem privaten und einem öffentlichen Schlüssel, eine passwortfreie Anmeldung zu einem Remote-Server aufgebaut, die bei Bedarf durch die Eingabe einer zusätzlichen Passphrase weiter abgesichert werden kann. Die Verwendung eines solchen Schlüsselpaares ist daher wesentlich schwieriger zu kompromittieren als die Eingabe eines Passwortes.
 
