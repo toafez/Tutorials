@@ -1,0 +1,128 @@
+# Create a folder called "paperless-nxg" in the Docker directory. 
+# Change to this folder and create the following subfolders: 
+# data, media, export, consume, pgdata and redisdata
+#
+# The final directory structure should look like this:
+#
+# docker
+#   paperless-ngx
+#     data
+#     media
+#     export
+#     consume
+#     pgdata
+#     redisdata
+
+services:
+  broker:
+    image: docker.io/library/redis:8
+    container_name: Paperless-ngx-Redis
+    restart: unless-stopped
+
+    # Health check to verify Redis readiness
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+    # Security options for Redis container
+    security_opt:
+      - no-new-privileges:true
+
+    # Redis volume configuration for data persistence
+    volumes:
+      - /volume1/docker/paperless-ngx/redisdata:/data:rw
+
+  db:
+    image: docker.io/library/postgres:17
+    container_name: Paperless-ngx-PostgreSQL
+    hostname: paperless-postgres-db
+    restart: unless-stopped
+
+    # Health check to verify PostgreSQL readiness
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+    # Security options for PostgreSQL container
+    security_opt:
+      - no-new-privileges:true
+
+    # PostgreSQL volume configuration for data persistence
+    volumes:
+      - /volume1/docker/paperless-ngx/pgdata:/var/lib/postgresql/data:rw
+
+    # Environment variables for PostgreSQL configuration
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless                    # Enter your own username here
+      POSTGRES_PASSWORD: paperless                # Enter your own password here
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: Paperless-ngx
+    restart: unless-stopped
+
+    # Security options for Paperless-ngx container
+    security_opt:
+      - no-new-privileges:true
+
+    # Set the start sequence for the services
+    depends_on:
+      - db
+      - broker
+
+    # Set forwarding port for Paperless-ngx
+    ports:
+      - "8188:8000"
+
+    # Paperless-ngx volume configuration for data persistence
+    volumes:
+      - /volume1/docker/paperless-ngx/data:/usr/src/paperless/data:rw
+      - /volume1/docker/paperless-ngx/media:/usr/src/paperless/media:rw
+      - /volume1/docker/paperless-ngx/export:/usr/src/paperless/export:rw
+      - /volume1/docker/paperless-ngx/consume:/usr/src/paperless/consume:rw
+
+    # Environment variables for Paperless-ngx configuration
+    environment:
+      # Set Redis variables
+      PAPERLESS_REDIS: redis://broker:6379
+
+      # Set PostgreSQL variables
+      PAPERLESS_DBHOST: paperless-postgres-db
+      PAPERLESS_DBNAME: paperless
+      PAPERLESS_DBUSER: paperless                 # Enter the username that corresponds to the PostgreSQL database here
+      PAPERLESS_DBPASS: paperless                 # Enter the password that corresponds to the PostgreSQL database here.
+
+      # Set user variables
+      USERMAP_UID: 1000                           # Enter your own UID here
+      USERMAP_GID: 10                             # Enter your own GID here
+      PAPERLESS_ADMIN_USER: YOUR-USERNAME         # Enter your own username here
+      PAPERLESS_ADMIN_PASSWORD: YOUR-PASSWORD     # Enter your own password here
+
+      # Set timezone
+      PAPERLESS_TIME_ZONE: Europe/Berlin
+
+      # Set OCR language
+      PAPERLESS_OCR_LANGUAGE: deu+eng
+
+      # Set OCR standard filename format
+      PAPERLESS_FILENAME_FORMAT: '{{ correspondent }}/{{ document_type }}/{created_year}-{created_month}-{created_day}_{{ title }}'
+
+      # First, check that the file name contains a valid date. If so, use this instead of the date in the document
+      PAPERLESS_FILENAME_DATE_ORDER: YMD
+
+      # Remove any duplicate files from the Consume folder
+      PAPERLESS_CONSUMER_DELETE_DUPLICATES: true
+
+      # Capture files in subfolders of the consume folder
+      PAPERLESS_CONSUMER_RECURSIVE: true
+
+      # Ignore the date found in the documents
+      PAPERLESS_IGNORE_DATES: "1970-01-01"        # Enter one or more comma-separated dates here
+
+      # Invalidate the digital signature of PDF documents to enable OCR processing
+      PAPERLESS_OCR_USER_ARGS: '{"invalidate_digital_signatures": true}'

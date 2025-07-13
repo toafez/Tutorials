@@ -8,3 +8,6 @@
 
 ### Netzwerkfreigaben
 - [SMB-Netzwerkfreigaben mit Autofs auf einer Debian-basierten Linux-Distribution](https://github.com/toafez/Tutorials/blob/main/SMB-Freigaben_mit_Autofs.md)
+
+### Docker-Compose Files
+- [Paperless-ngx mit Redis und PostgreSQL](Docker-Compose_Paperless-ngx_Redis_PostgreSQL.yaml)
