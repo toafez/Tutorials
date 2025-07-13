@@ -32,7 +32,7 @@ services:
 
     # Redis volume configuration for data persistence
     volumes:
-      - /volume1/docker/paperless-ngx/redisdata:/data:rw
+      - /volume1/docker/paperless-ngx/redisdata:/data:rw                       # Adjust the path before the colon as required
 
   db:
     image: docker.io/library/postgres:17
@@ -53,14 +53,13 @@ services:
 
     # PostgreSQL volume configuration for data persistence
     volumes:
-      - /volume1/docker/paperless-ngx/pgdata:/var/lib/postgresql/data:rw
+      - /volume1/docker/paperless-ngx/pgdata:/var/lib/postgresql/data:rw       # Adjust the path before the colon as required
 
     # Environment variables for PostgreSQL configuration
     environment:
-      POSTGRES_DB: paperless
-      POSTGRES_USER: paperless                    # Enter your own username here
-      POSTGRES_PASSWORD: paperless                # Enter your own password here
-
+      POSTGRES_DB: paperless                                                   # Enter your own database name here if required
+      POSTGRES_USER: paperless                                                 # Enter your own user name here if required
+      POSTGRES_PASSWORD: paperless                                             # Enter your own password here if required
   webserver:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
     container_name: Paperless-ngx
@@ -81,10 +80,10 @@ services:
 
     # Paperless-ngx volume configuration for data persistence
     volumes:
-      - /volume1/docker/paperless-ngx/data:/usr/src/paperless/data:rw
-      - /volume1/docker/paperless-ngx/media:/usr/src/paperless/media:rw
-      - /volume1/docker/paperless-ngx/export:/usr/src/paperless/export:rw
-      - /volume1/docker/paperless-ngx/consume:/usr/src/paperless/consume:rw
+      - /volume1/docker/paperless-ngx/data:/usr/src/paperless/data:rw          # Adjust the path before the colon as required
+      - /volume1/docker/paperless-ngx/media:/usr/src/paperless/media:rw        # Adjust the path before the colon as required
+      - /volume1/docker/paperless-ngx/export:/usr/src/paperless/export:rw      # Adjust the path before the colon as required
+      - /volume1/docker/paperless-ngx/consume:/usr/src/paperless/consume:rw    # Adjust the path before the colon as required
 
     # Environment variables for Paperless-ngx configuration
     environment:
@@ -92,16 +91,16 @@ services:
       PAPERLESS_REDIS: redis://broker:6379
 
       # Set PostgreSQL variables
-      PAPERLESS_DBHOST: paperless-postgres-db
-      PAPERLESS_DBNAME: paperless
-      PAPERLESS_DBUSER: paperless                 # Enter the username that corresponds to the PostgreSQL database here
-      PAPERLESS_DBPASS: paperless                 # Enter the password that corresponds to the PostgreSQL database here.
+      PAPERLESS_DBHOST: paperless-postgres-db                                  # Enter your own host name for the PostgreSQL database here if required
+      PAPERLESS_DBNAME: paperless                                              # Enter your own database name for the PostgreSQL database here if required
+      PAPERLESS_DBUSER: paperless                                              # Enter your own user name for the PostgreSQL database here if required
+      PAPERLESS_DBPASS: paperless                                              # Enter your own password for the PostgreSQL database here if required
 
       # Set user variables
-      USERMAP_UID: 1000                           # Enter your own UID here
-      USERMAP_GID: 10                             # Enter your own GID here
-      PAPERLESS_ADMIN_USER: YOUR-USERNAME         # Enter your own username here
-      PAPERLESS_ADMIN_PASSWORD: YOUR-PASSWORD     # Enter your own password here
+      USERMAP_UID: 1000                                                        # Enter your own UID here if required
+      USERMAP_GID: 10                                                          # Enter your own GID here if required
+      PAPERLESS_ADMIN_USER: YOUR-USERNAME                                      # Enter your own username here 
+      PAPERLESS_ADMIN_PASSWORD: YOUR-PASSWORD                                  # Enter your own password here
 
       # Set timezone
       PAPERLESS_TIME_ZONE: Europe/Berlin
@@ -122,7 +121,7 @@ services:
       PAPERLESS_CONSUMER_RECURSIVE: true
 
       # Ignore the date found in the documents
-      PAPERLESS_IGNORE_DATES: "1970-01-01"        # Enter one or more comma-separated dates here
+      PAPERLESS_IGNORE_DATES: "1970-01-01"                                     # Enter one or more comma-separated dates here if required
 
       # Invalidate the digital signature of PDF documents to enable OCR processing
       PAPERLESS_OCR_USER_ARGS: '{"invalidate_digital_signatures": true}'
