@@ -1,127 +1,164 @@
-# Create a folder called "paperless-nxg" in the Docker directory. 
-# Change to this folder and create the following subfolders: 
-# data, media, export, consume, pgdata and redisdata
+# Paperless-ngx:latest inklusive Redis 8 und PostgreSQL 18
+# YAML-Dateiversion: 1.10 vom 20.10.2025
+
+# Erstelle  einen Ordner namens "paperless-nxg" im Docker-Verzeichnis. 
+# Wechsel in diesen Ordner und erstelle die folgenden Unterordner: 
+# data, media, export, consume, pgdata und redisdata.
 #
-# The final directory structure should look like this:
-#
-# docker
-#   paperless-ngx
-#     data
-#     media
-#     export
-#     consume
-#     pgdata
-#     redisdata
+# Die endgültige Verzeichnisstruktur sollte wie folgt aussehen:
+# /volume1
+#   /docker
+#     /paperless-ngx
+#       /data
+#       /media
+#       /export
+#       /consume
+#       /pgdata
+#       /redisdata
 
 services:
+
+# Redis Container
   broker:
     image: docker.io/library/redis:8
+
+    # Name des Redis-Containers (nach Bedarf anpassen)
     container_name: Paperless-ngx-Redis
     restart: unless-stopped
 
-    # Health check to verify Redis readiness
+    # Sicherheitsoptionen
+    security_opt:
+      - no-new-privileges:true
+
+    # Speicherort persistenter Daten (Pfad vor dem Doppelpunkt nach Bedarf anpassen)
+    volumes:
+      - /volume1/docker/paperless-ngx/redisdata:/data:rw
+
+    # Gesundheitscheck des Redis-Containers
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 30s
       timeout: 10s
       retries: 5
 
-    # Security options for Redis container
-    security_opt:
-      - no-new-privileges:true
-
-    # Redis volume configuration for data persistence
-    volumes:
-      - /volume1/docker/paperless-ngx/redisdata:/data:rw                       # Adjust the path before the colon as required
-
+# PostgreSQL Container
   db:
-    image: docker.io/library/postgres:17
+    image: docker.io/library/postgres:18
+
+    # Name des PostgreSQL-Containers (nach Bedarf anpassen)
     container_name: Paperless-ngx-PostgreSQL
+    # Hostname des PostgreSQL-Containers (nach Bedarf anpassen)
     hostname: paperless-postgres-db
     restart: unless-stopped
 
-    # Health check to verify PostgreSQL readiness
+    # Sicherheitsoptionen
+    security_opt:
+      - no-new-privileges:true
+
+   # Speicherort persistenter Daten (Pfad vor dem Doppelpunkt nach Bedarf anpassen)
+    volumes:
+      - /volume1/docker/paperless-ngx/pgdata:/var/lib/postgresql/18/data:rw
+
+    # Umgebungsvariablen
+    environment:
+      # Datenbankname (nach Bedarf anpassen)
+      POSTGRES_DB: paperless
+      # Datenbankbenutzer (nach Bedarf anpassen)
+      POSTGRES_USER: paperless
+      # Datenbankpasswort (nach Bedarf anpassen)
+      POSTGRES_PASSWORD: paperless
+
+    # Gesundheitscheck des PostgreSQL-Containers
     healthcheck:
-      test: ["CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}"]
+      #                                      Datenbankname      Datenbankbenutzer
+      test: ["CMD", "pg_isready", "-q", "-d", "paperless", "-U", "paperless"]
       interval: 30s
       timeout: 10s
       retries: 5
 
-    # Security options for PostgreSQL container
-    security_opt:
-      - no-new-privileges:true
-
-    # PostgreSQL volume configuration for data persistence
-    volumes:
-      - /volume1/docker/paperless-ngx/pgdata:/var/lib/postgresql/data:rw       # Adjust the path before the colon as required
-
-    # Environment variables for PostgreSQL configuration
-    environment:
-      POSTGRES_DB: paperless                                                   # Enter your own database name here if required
-      POSTGRES_USER: paperless                                                 # Enter your own user name here if required
-      POSTGRES_PASSWORD: paperless                                             # Enter your own password here if required
+# Paperless-ngx Container
   webserver:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
+
+    # Name des Paperless-ngx-Containers (nach Bedarf anpassen)
     container_name: Paperless-ngx
     restart: unless-stopped
 
-    # Security options for Paperless-ngx container
+    # Sicherheitsoptionen
     security_opt:
       - no-new-privileges:true
 
-    # Set the start sequence for the services
+    # Festlegung der Reihenfolge und Ausführung weiterer Dienste-Abhängigkeiten
     depends_on:
       - db
       - broker
 
-    # Set forwarding port for Paperless-ngx
+    # Weiterleitungsport
     ports:
-      - "8188:8000"
+      - "8180:8000"
 
-    # Paperless-ngx volume configuration for data persistence
+    # Gesundheitscheck des Paperless-ngx-Containers
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8000"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+
+    # Speicherorte persistenter Daten (Pfade vor dem Doppelpunkt nach Bedarf anpassen)
     volumes:
-      - /volume1/docker/paperless-ngx/data:/usr/src/paperless/data:rw          # Adjust the path before the colon as required
-      - /volume1/docker/paperless-ngx/media:/usr/src/paperless/media:rw        # Adjust the path before the colon as required
-      - /volume1/docker/paperless-ngx/export:/usr/src/paperless/export:rw      # Adjust the path before the colon as required
-      - /volume1/docker/paperless-ngx/consume:/usr/src/paperless/consume:rw    # Adjust the path before the colon as required
+      - /volume1/docker/paperless-ngx/data:/usr/src/paperless/data:rw
+      - /volume1/docker/paperless-ngx/media:/usr/src/paperless/media:rw
+      - /volume1/docker/paperless-ngx/export:/usr/src/paperless/export:rw
+      - /volume1/docker/paperless-ngx/consume:/usr/src/paperless/consume:rw
 
-    # Environment variables for Paperless-ngx configuration
+    # Umgebungsvariablen
     environment:
-      # Set Redis variables
+      # Umgebungsvariablen für Redis festlegen
       PAPERLESS_REDIS: redis://broker:6379
 
-      # Set PostgreSQL variables
-      PAPERLESS_DBHOST: paperless-postgres-db                                  # Enter your own host name for the PostgreSQL database here if required
-      PAPERLESS_DBNAME: paperless                                              # Enter your own database name for the PostgreSQL database here if required
-      PAPERLESS_DBUSER: paperless                                              # Enter your own user name for the PostgreSQL database here if required
-      PAPERLESS_DBPASS: paperless                                              # Enter your own password for the PostgreSQL database here if required
+      # Umgebungsvariablen für PostgreSQL festlegen
+      # Hostname des PostgreSQL-Containers (entspricht der Variablen "hostname" im Abschnitt "db")
+      PAPERLESS_DBHOST: paperless-postgres-db
+      # Datenbankname (entspricht der Variablen "POSTGRES_DB")
+      PAPERLESS_DBNAME: paperless
+      # Benutzername (entspricht der Variablen "POSTGRES_USER")
+      PAPERLESS_DBUSER: paperless
+      # Benutzername (entspricht der Variablen "POSTGRES_PASSWORD")
+      PAPERLESS_DBPASS: paperless
 
-      # Set user variables
-      USERMAP_UID: 1000                                                        # Enter your own UID here if required
-      USERMAP_GID: 10                                                          # Enter your own GID here if required
-      PAPERLESS_ADMIN_USER: YOUR-USERNAME                                      # Enter your own username here 
-      PAPERLESS_ADMIN_PASSWORD: YOUR-PASSWORD                                  # Enter your own password here
+      # Umgebungsvariablen für Paperless-ngx festlegen
+      # Benutzer-ID des berechtigten Docker-Systembenutzers (nach Bedarf anpassen)
+      USERMAP_UID: 1000
+      # Gruppen-ID des berechtigten Docker-Systembenutzers (nach Bedarf anpassen)
+      USERMAP_GID: 10
+      # Name des Paperless-ngx Benutzers (nach Bedarf anpassen)
+      PAPERLESS_ADMIN_USER: BENUTZERNAME
+      # Passwort des Paperless-ngx Benutzers (nach Bedarf anpassen)
+      PAPERLESS_ADMIN_PASSWORD: BENUTZER-PASSWORT
 
-      # Set timezone
+      # Zeitzone (nach Bedarf anpassen)
       PAPERLESS_TIME_ZONE: Europe/Berlin
 
-      # Set OCR language
+      # OCR-Sprache (nach Bedarf anpassen)
       PAPERLESS_OCR_LANGUAGE: deu+eng
 
-      # Set OCR standard filename format
-      PAPERLESS_FILENAME_FORMAT: '{{ correspondent }}/{{ document_type }}/{created_year}-{created_month}-{created_day}_{{ title }}'
+      # Standard-OCR-Dateinamenformat (nach Bedarf anpassen)
+      PAPERLESS_FILENAME_FORMAT: '{{ correspondent }}/{{ document_type }}/{{ created_year }}-{{ created_month }}-{{ created_day }}_{{ title }}'
 
-      # First, check that the file name contains a valid date. If so, use this instead of the date in the document
+      # Entferne alle Platzhalter, die als "none" aufgelöst wurden.
+      PAPERLESS_FILENAME_FORMAT_REMOVE_NONE: true
+
+      # Überprüfen, ob der Dateiname ein gültiges Datum (YYYY-MM-DD) enthält. Ist dies der Fall, wird dieses anstelle des Datums im Dokument verwendet.
       PAPERLESS_FILENAME_DATE_ORDER: YMD
 
-      # Remove any duplicate files from the Consume folder
+      # Entferne alle doppelten Dateien aus dem Ordner "Consume"
       PAPERLESS_CONSUMER_DELETE_DUPLICATES: true
 
-      # Capture files in subfolders of the consume folder
+      # Dateien in Unterordnern des Consumeordners erfassen
       PAPERLESS_CONSUMER_RECURSIVE: true
 
-      # Ignore the date found in the documents
-      PAPERLESS_IGNORE_DATES: "1970-01-01"                                     # Enter one or more comma-separated dates here if required
+      # Ignoriere ein oder mehrere durch Kommas getrennte Datumsangaben in den Dokumenten
+      PAPERLESS_IGNORE_DATES: "1970-01-01"
 
-      # Invalidate the digital signature of PDF documents to enable OCR processing
+      # Die digitale Signatur von PDF-Dokumenten ungültig machen, um die OCR-Verarbeitung zu ermöglichen
       PAPERLESS_OCR_USER_ARGS: '{"invalidate_digital_signatures": true}'
