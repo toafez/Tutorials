@@ -1,5 +1,6 @@
 # Paperless-ngx:latest inklusive Redis 8 und PostgreSQL 18
-# YAML-Dateiversion: 1.10 vom 20.10.2025
+# YAML-Dateiversion: 1.20 vom 23.10.2025
+# Fix: Set the internal volume path of PostgreSQL from /var/lib/postgresql/18/data to /var/lib/postgresql/18/docker
 
 # Erstelle  einen Ordner namens "paperless-nxg" im Docker-Verzeichnis. 
 # Wechsel in diesen Ordner und erstelle die folgenden Unterordner: 
@@ -57,7 +58,7 @@ services:
 
    # Speicherort persistenter Daten (Pfad vor dem Doppelpunkt nach Bedarf anpassen)
     volumes:
-      - /volume1/docker/paperless-ngx/pgdata:/var/lib/postgresql/18/data:rw
+      - /volume1/docker/paperless-ngx/pgdata:/var/lib/postgresql/18/docker:rw
 
     # Umgebungsvariablen
     environment:
