@@ -104,7 +104,7 @@ Erstelle nun ein neues, leeres Verzeichnis, das wiederum den Namen `/pgdata` tr�
 mkdir ./pgdata
 ```
 
-Bearbeite im Folgenden deine Docker-Compose-Datei mit einem Editor deiner Wahl. Verwende dafür jedoch nicht die in UGOS Pro installierte Docker-App, Portainer oder ähnliches, da nach dem erneuten Bereitstellen bzw. "Deployen" Paperless-ngx inklusive aller verbundenen Services komplett gestartet wird.
+Bearbeite im Folgenden deine Docker-Compose-Datei mit einem Editor deiner Wahl. Verwende dafür jedoch nicht die in UGOS Pro installierte Docker-App, Portainer oder ähnliches, da nach dem erneuten Bereitstellen bzw. "Deployen" Paperless-ngx inklusive aller verbundenen Services komplett gestartet wird und das Update dadurch fehlschlagen kann.
 
 Ändere folgende Zeile in deiner Docker-Compose-Datei von...
 ```
