@@ -9,5 +9,7 @@
 ### Netzwerkfreigaben
 - [SMB-Netzwerkfreigaben mit Autofs auf einer Debian-basierten Linux-Distribution](https://github.com/toafez/Tutorials/blob/main/SMB-Freigaben_mit_Autofs.md)
 
-### Docker-Compose Files
-- [Paperless-ngx mit Redis und PostgreSQL](Docker-Compose_Paperless-ngx_Redis_PostgreSQL.yaml)
+### UGREEN-NAS
+- #### Docker
+  - [Paperless-ngx mit Redis und PostgreSQL](Docker-Compose_Paperless-ngx_Redis_PostgreSQL.yaml)
+  - [Paperless-ngx: Update der PostgreSQL-Datenbank von Version 17 auf Version 18](Paperless-ngx_Update_Postgres17_to_Postgres18.md) 
