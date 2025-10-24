@@ -5,7 +5,7 @@ Vor kurzem stand ich vor der Herausforderung, im Zusammenspiel mit Paperless-ngx
 ***Texte in Großbuchstaben innerhalb eckiger Klammern dienen als Platzhalter und müssen durch eigene Angaben ersetzt werden, können aber an einigen Stellen auch nur der Information dienen. Es ist zu beachten, dass die eckigen Klammern Teil des Platzhalters sind und beim Ersetzen durch eigene Angaben ebenfalls entfernt werden müssen.***
 
 - Im Folgenden wird davon ausgegangen, dass Paperless-ngx das Verzeichnis `/volume1/docker/paperless-ngx` zur Aufnahme der persistenten Daten verwendet.
-- **Erstelle zur Sicherheit ein Backup der persitenten Daten.**
+- **Erstelle zur Sicherheit ein Backup der persistenten Daten.**
 - Die Inhalte der PostgreSQL-Datenbank liegen im Unterverzeichnis `/pgdata`. 
 - Als Datenbankname `[POSTGRES_DB_NAME]`, Benutzername `[POSTGRES_USERNAME]` und Passwort `[POSTGRES_PASSWORD]` wird der Name **"paperless"** verwendet.
 - In der Docker-Compose-Datei ist der PostgreSQL-Datenbank-Container mit dem Service-Namen `[DOCKER_COMPOSE_DB_SERVICE_NAME]` **db** und dem Containernamen `[POSTGRES_CONTAINER_NAME]` **Paperless-ngx-PostgreSQL** benannt. 
