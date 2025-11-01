@@ -1,0 +1,194 @@
+# Paperless-ngx inklusive Redis, Tika, Gotenberg und PostgreSQL
+# YAML-Dateiversion: 1.00 vom 01.11.2025
+
+# Erstelle  einen Ordner namens "paperless-nxg" im Docker-Verzeichnis. 
+# Wechsel in diesen Ordner und erstelle die folgenden Unterordner: 
+# data, media, export, consume, pgdata und redisdata.
+#
+# Die endgültige Verzeichnisstruktur sollte wie folgt aussehen:
+# /volume1
+#   /docker
+#     /paperless-ngx
+#       /data
+#       /media
+#       /export
+#       /consume
+#       /pgdata
+#       /redisdata
+
+services:
+
+# Redis Container
+  broker:
+    image: docker.io/library/redis:8
+
+    # Containername (nach Bedarf anpassen)
+    container_name: Paperless-ngx-Redis
+    restart: unless-stopped
+
+    # Sicherheitsoptionen
+    security_opt:
+      - no-new-privileges:true
+
+    # Gesundheitscheck
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+    # Speicherort persistenter Daten (Pfad vor dem Doppelpunkt nach Bedarf anpassen)
+    volumes:
+      - /volume1/docker/paperless-ngx/redisdata:/data:rw
+
+# PostgreSQL Container
+  db:
+    image: docker.io/library/postgres:18
+
+    # Containername (nach Bedarf anpassen)
+    container_name: Paperless-ngx-PostgreSQL
+    # Hostname des PostgreSQL-Containers (nach Bedarf anpassen)
+    hostname: paperless-postgres-db
+    restart: unless-stopped
+
+    # Sicherheitsoptionen
+    security_opt:
+      - no-new-privileges:true
+
+    # Gesundheitscheck
+    healthcheck:
+      #                                      Datenbankname      Datenbankbenutzer
+      test: ["CMD", "pg_isready", "-q", "-d", "paperless", "-U", "paperless"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+   # Speicherort persistenter Daten (Pfad vor dem Doppelpunkt nach Bedarf anpassen)
+    volumes:
+      - /volume1/docker/paperless-ngx/pgdata:/var/lib/postgresql/18/docker:rw
+
+    # Umgebungsvariablen
+    environment:
+      # Datenbankname (nach Bedarf anpassen)
+      POSTGRES_DB: paperless
+      # Datenbankbenutzer (nach Bedarf anpassen)
+      POSTGRES_USER: paperless
+      # Datenbankpasswort (nach Bedarf anpassen)
+      POSTGRES_PASSWORD: paperless
+
+# Gotenberg Container
+  gotenberg:
+    image: docker.io/gotenberg/gotenberg:latest
+
+    # Containername (nach Bedarf anpassen)
+    container_name: Paperless-ngx-Gotenberg
+    restart: unless-stopped
+
+    # Sicherheitsoptionen
+    security_opt:
+      - no-new-privileges:true
+
+    # Die Goteborg-Chromium-Route wird zur Konvertierung von .eml-Dateien verwendet. 
+    # Wir möchten keine externen Inhalte wie Tracking-Pixel oder sogar Javascript zulassen.
+    command:
+      - "gotenberg"
+      - "--chromium-disable-javascript=true"
+      - "--chromium-allow-list=file:///tmp/.*"
+  
+# Tika Container
+  tika:
+    image: docker.io/apache/tika:latest
+
+    # Containername (nach Bedarf anpassen)
+    container_name: Paperless-ngx-Tika
+    restart: unless-stopped
+
+    # Sicherheitsoptionen
+    security_opt:
+      - no-new-privileges:true
+
+# Paperless-ngx Container
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+
+    # Containername (nach Bedarf anpassen)
+    container_name: Paperless-ngx
+    restart: unless-stopped
+
+    # Sicherheitsoptionen
+    security_opt:
+      - no-new-privileges:true
+
+    # Festlegung der Reihenfolge und Ausführung weiterer Dienste-Abhängigkeiten
+    depends_on:
+      - db
+      - broker
+
+    # Weiterleitungsport
+    ports:
+      - "8180:8000"
+
+    # Gesundheitscheck
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8000"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+
+    # Speicherorte persistenter Daten (Pfade vor dem Doppelpunkt nach Bedarf anpassen)
+    volumes:
+      - /volume1/docker/paperless-ngx/data:/usr/src/paperless/data:rw
+      - /volume1/docker/paperless-ngx/media:/usr/src/paperless/media:rw
+      - /volume1/docker/paperless-ngx/export:/usr/src/paperless/export:rw
+      - /volume1/docker/paperless-ngx/consume:/usr/src/paperless/consume:rw
+
+    # Umgebungsvariablen
+    environment:
+      # Umgebungsvariablen für den Redis-Container festlegen
+      PAPERLESS_REDIS: redis://broker:6379
+
+      # Umgebungsvariablen für den PostgreSQL-Container festlegen
+      # Hostname des PostgreSQL-Containers (entspricht der Variablen "hostname" im Abschnitt services: -> db: )
+      PAPERLESS_DBHOST: paperless-postgres-db
+      # Datenbankname (entspricht der Variablen "POSTGRES_DB" im Abschnitt services: -> db: )
+      PAPERLESS_DBNAME: paperless
+      # Benutzername (entspricht der Variablen "POSTGRES_USER" im Abschnitt services: -> db: )
+      PAPERLESS_DBUSER: paperless
+      # Benutzername (entspricht der Variablen "POSTGRES_PASSWORD" im Abschnitt services: -> db: )
+      PAPERLESS_DBPASS: paperless
+
+      # Umgebungsvariablen für den Tika-Container festlegen
+      # Aktivieren (oder deaktivieren) des Tika-Parser
+      PAPERLESS_TIKA_ENABLED: 1
+      # Legt die URL fest, über die Paperless den Gotenberg-Server erreichen kann
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
+      # Legt die URL fest, über die Paperless den Tika-Server erreichen kann
+      PAPERLESS_TIKA_ENDPOINT: http://tika:9998
+
+      # Umgebungsvariablen für den Paperless-ngx-Container festlegen
+      # Benutzer-ID des berechtigten Docker-Systembenutzers (nach Bedarf anpassen)
+      USERMAP_UID: 1000
+      # Gruppen-ID des berechtigten Docker-Systembenutzers (nach Bedarf anpassen)
+      USERMAP_GID: 10
+      # Name des Paperless-ngx Benutzers (nach Bedarf anpassen)
+      PAPERLESS_ADMIN_USER: admin-user
+      # Passwort des Paperless-ngx Benutzers (nach Bedarf anpassen)
+      PAPERLESS_ADMIN_PASSWORD: admin-password
+      # Zeitzone (nach Bedarf anpassen)
+      PAPERLESS_TIME_ZONE: Europe/Berlin
+      # OCR-Sprache (nach Bedarf anpassen)
+      PAPERLESS_OCR_LANGUAGE: deu+eng
+      # Standard-OCR-Dateinamenformat (nach Bedarf anpassen)
+      PAPERLESS_FILENAME_FORMAT: '{{ correspondent }}/{{ document_type }}/{{ created_year }}-{{ created_month }}-{{ created_day }}_{{ title }}'
+      # Entferne alle Platzhalter, die als "none" aufgelöst wurden.
+      PAPERLESS_FILENAME_FORMAT_REMOVE_NONE: true
+      # Überprüfen, ob der Dateiname ein gültiges Datum (YYYY-MM-DD) enthält. Ist dies der Fall, wird dieses anstelle des Datums im Dokument verwendet.
+      PAPERLESS_FILENAME_DATE_ORDER: YMD
+      # Entferne alle doppelten Dateien aus dem Ordner "Consume"
+      PAPERLESS_CONSUMER_DELETE_DUPLICATES: true
+      # Dateien in Unterordnern des Consumeordners erfassen
+      PAPERLESS_CONSUMER_RECURSIVE: true
+      # Ignoriere ein oder mehrere durch Kommas getrennte Datumsangaben in den Dokumenten (nach Bedarf anpassen)
+      PAPERLESS_IGNORE_DATES: "1970-01-01, 1970-12-31"
+      # Die digitale Signatur von PDF-Dokumenten ungültig machen, um die OCR-Verarbeitung zu ermöglichen
+      PAPERLESS_OCR_USER_ARGS: '{"invalidate_digital_signatures": true}'
