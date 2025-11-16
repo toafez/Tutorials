@@ -1,5 +1,6 @@
 # Paperless-ngx inklusive Redis, Tika, Gotenberg und PostgreSQL
-# YAML-Dateiversion: 1.00 vom 01.11.2025
+# YAML-Dateiversion: 1.10 vom 16.11.2025
+# FIX: Gotenberg und Tika der Variablen depends_on: hinzugefügt.
 
 # Erstelle  einen Ordner namens "paperless-nxg" im Docker-Verzeichnis. 
 # Wechsel in diesen Ordner und erstelle die folgenden Unterordner: 
@@ -123,6 +124,8 @@ services:
     depends_on:
       - db
       - broker
+      - gotenberg
+      - tika
 
     # Weiterleitungsport
     ports:
