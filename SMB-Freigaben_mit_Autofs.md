@@ -16,13 +16,13 @@ Damit SMB-Netzwerkfreigaben überhaupt in das lokale Linux-Dateisystem eingebund
     sudo apt install cifs-utils
 
 ## Authentifikationsdatei _.smbcredentials_ anlegen
-Eine SMB-Netzwerkfreigabe erfordert in der Regel die Eingabe eines Benutzernamens und eines Passworts. Um später eine automatische Anmeldung an einer Netzwerkfreigabe mittels Autofs zu ermöglichen, sollten diese Zugangsdaten möglichst in einer versteckten Datei mit dem Namen `.smbcredentials` im Home-Verzeichnis des aktuell angemeldeten Benutzers gespeichert werden.
+Eine SMB-Netzwerkfreigabe erfordert in der Regel die Eingabe eines Benutzernamens und eines Passworts. Um später eine automatische Anmeldung an einer SMB-Netzwerkfreigabe mittels Autofs zu ermöglichen, sollten diese Zugangsdaten möglichst in einer **versteckten Datei** mit dem Namen `.smbcredentials` im Home-Verzeichnis des aktuell angemeldeten Benutzers gespeichert werden. Wenn auf mehrere SMB-Netzwerkfreigaben unterschiedlicher Server mit abweichenden Zugangsdaten zugegriffen werden soll, empfiehlt es sich, die Datei `.smbcredentials` um den Namen des jeweiligen Servers zu erweitern (z. B. `.smbcredentials_[SERVERNAME]`) oder einen komplett anderen, aussagekräftigeren Dateinamen, der mit einem Punkt beginnt, zu wählen.
 
-- Eine neue, leere Datei mit dem Namen `.smbcredentials` im Home-Verzeichnis des aktuell angemeldeten Benutzers erstellen.
+- Eine neue, leere Datei mit dem Namen `.smbcredentials` oder einem abweichenden Dateinamen im Home-Verzeichnis des aktuell angemeldeten Benutzers erstellen.
 
       touch ~/.smbcredentials
 
-- Die soeben erstellte `.smbcredentials` editieren. In diesem Beispiel wird der Texteditor `nano` verwendet.
+- Die soeben erstellte Datei editieren. In diesem Beispiel wird der Texteditor `nano` verwendet.
 
       nano ~/.smbcredentials
 
@@ -44,9 +44,11 @@ Da jetzt alle Vorbereitungen abgeschlossen sind, kann nun damit begonnen werden 
     sudo apt install autofs
 
 ## Mountpoint festlegen, wohin die SMB-Freigaben gemountet werden sollen.
-Für jeden Server, der SMB-Netzwerkfreigaben zur Verfügung stellt, die in das lokale Linux-Dateisystem eingebunden werden sollen, muss ein eigener Mountpoint definiert werden. Prädestiniert dafür ist das Systemverzeichnis `/media`. In Mehrbenutzersystemen sollte der Mountpoint zusätzlich den Benutzernamen enthalten, der die Freigabe anfordert, gefolgt vom eigentlichen Servernamen. Der Speicherort und damit die genaue Definition des Mountpoints bleibt aber letztlich jedem selbst überlassen. Bitte ersetze die folgenden [PLATZHALTER] durch deine eigenen Angaben und führe den Befehl als `root` aus.
+Für jeden Server, der SMB-Netzwerkfreigaben zur Verfügung stellt, die in das lokale Linux-Dateisystem eingebunden werden sollen, muss ein eigener Mountpoint definiert werden. Prädestiniert dafür ist das Systemverzeichnis `/media`. In Mehrbenutzersystemen sollte der Mountpoint zusätzlich den Benutzernamen enthalten, der die Freigabe anfordert, gefolgt vom eigentlichen Servernamen. Ersetze bitte die folgenden Platzhalter durch deine eigenen Angaben. Führe den Befehl in diesem Fall mit Root-Berechtigung aus, da es sich um einen Systemordner handelt.
 
     sudo mkdir -p /media/[BENUTZERNAME]/[SERVERNAME]
+
+Alternativ kann auch ein frei wählbares Verzeichnis im eigenen Benutzer-Home-Ordner verwendet werden, wie z.B. `/home/[BENUTZERNAME]/Netzlaufwerke/[SERVERNAME]` . In diesem Fall können beim Erstellen des Verzeichnisses die Root-Berechtigungen (ein vorangestelltes „sudo”) ignoriert werden. Der Speicherort und somit die genaue Definition des Mountpoints bleibt jedoch jedem selbst überlassen.
 
 ## Die Map-Datei
 Die eigentlichen SMB-Netzwerkfreigaben werden nun zeilenweise in eine Map-Datei eingetragen, deren Speicherort und Dateiname frei gewählt werden kann. Es empfiehlt sich jedoch, die Datei unter /etc mit dem Dateipräfix `auto.`, gefolgt vom Servernamen abzulegen, also z.B. `/etc/auto.mein-server`. Führe alle nachfolgenden Befehle als `root` aus.
@@ -86,5 +88,23 @@ Autofs wird nach der Installation automatisch gestartet, kann mit Root-Rechten a
     sudo service autofs [OPTION]
 
 Als Optionen können die Werte `stop`, `start`, `reload`, `restart` und `status` eingesetzt werden. Da die Optionen selbsterklärend sind, wird an dieser Stelle nicht weiter darauf eingegangen.
+
+## Tipps & Tricks
+In der Vergangenheit wurden die eingebundenen SMB-Netzwerklaufwerke im Dateimanager `Nemo` von Linux Mint direkt nach dem Systemstart ohne Probleme unter `Geräte` angezeigt. Dies scheint sich mittlerweile geändert zu haben, vermutlich nach einem Update, dessen Zeitpunkt und Name mir nicht bekannt ist.
+
+Mit einem kleinen Trick lässt sich das Problem jedoch beheben. Dazu lässt man über die App „Startprogramme” ein kleines Skript unmittelbar nach dem Systemstart ausführen, das jeden Mountpoint einmal über den `ls` Befehl aufruft. Alternativ kann man das Skript auch direkt als Cron Job konfigurieren.
+
+Nachfolgend ein Beispiel, wie so ein Skript aussehen könnte (natürlich )
+
+```
+#!/bin/bash
+ls /home/[BENUTZERNAME]/Netzlaufwerke/[SERVERNAME]/Dokumente >/dev/null
+ls /home/[BENUTZERNAME]/Netzlaufwerke/[SERVERNAME]/Downloads >/dev/null
+...
+..
+.. usw. ..
+
+```
+
 
 [Zurück zum Inhaltsverzeichnis](https://github.com/toafez/Tutorials)
