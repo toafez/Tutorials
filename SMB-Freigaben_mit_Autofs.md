@@ -112,8 +112,8 @@ Nachfolgend ein Beispiel, wie so ein Skript aussehen könnte (natürlich )
 
 ```
 #!/bin/bash
-ls /home/[BENUTZERNAME]/Netzlaufwerke/[SERVERNAME]/Dokumente >/dev/null
-ls /home/[BENUTZERNAME]/Netzlaufwerke/[SERVERNAME]/Downloads >/dev/null
+ls /media/[BENUTZERNAME]/[SERVERNAME]/Dokumente >/dev/null
+ls /media/[BENUTZERNAME]/[SERVERNAME]/Downloads >/dev/null
 ...
 ..
 .. usw. ..
