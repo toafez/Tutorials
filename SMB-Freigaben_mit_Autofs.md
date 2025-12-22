@@ -16,7 +16,9 @@ Damit SMB-Netzwerkfreigaben überhaupt in das lokale Linux-Dateisystem eingebund
     sudo apt install cifs-utils
 
 ## Authentifikationsdatei _.smbcredentials_ anlegen
-Eine SMB-Netzwerkfreigabe erfordert in der Regel die Eingabe eines Benutzernamens und eines Passworts. Um später eine automatische Anmeldung an einer SMB-Netzwerkfreigabe mittels Autofs zu ermöglichen, sollten diese Zugangsdaten möglichst in einer **versteckten Datei** mit dem Namen `.smbcredentials` im Home-Verzeichnis des aktuell angemeldeten Benutzers gespeichert werden. Wenn auf mehrere SMB-Netzwerkfreigaben unterschiedlicher Server mit abweichenden Zugangsdaten zugegriffen werden soll, empfiehlt es sich, die Datei `.smbcredentials` um den Namen des jeweiligen Servers zu erweitern (z. B. `.smbcredentials_[SERVERNAME]`) oder einen komplett anderen, aussagekräftigeren Dateinamen, der mit einem Punkt beginnt, zu wählen.
+Eine SMB-Netzwerkfreigabe erfordert in der Regel die Eingabe eines Benutzernamens und eines Passworts. Um später eine automatische Anmeldung an einer SMB-Netzwerkfreigabe mittels Autofs zu ermöglichen, sollten diese Zugangsdaten möglichst in einer **versteckten Datei** mit dem Namen `.smbcredentials` im Home-Verzeichnis des aktuell angemeldeten Benutzers gespeichert werden. 
+
+Wenn auf mehrere SMB-Netzwerkfreigaben unterschiedlicher Server mit abweichenden Zugangsdaten zugegriffen werden soll, empfiehlt es sich, die Datei `.smbcredentials` um den Namen des jeweiligen Servers zu erweitern z. B. `.smbcredentials_[SERVERNAME]` oder einen komplett anderen, aussagekräftigeren Dateinamen, **der mit einem Punkt beginnt**, zu wählen.
 
 - Eine neue, leere Datei mit dem Namen `.smbcredentials` oder einem abweichenden Dateinamen im Home-Verzeichnis des aktuell angemeldeten Benutzers erstellen.
 
@@ -48,7 +50,11 @@ Für jeden Server, der SMB-Netzwerkfreigaben zur Verfügung stellt, die in das l
 
     sudo mkdir -p /media/[BENUTZERNAME]/[SERVERNAME]
 
-Alternativ kann auch ein frei wählbares Verzeichnis im eigenen Benutzer-Home-Ordner verwendet werden, wie z.B. `/home/[BENUTZERNAME]/Netzlaufwerke/[SERVERNAME]` . In diesem Fall können beim Erstellen des Verzeichnisses die Root-Berechtigungen (ein vorangestelltes „sudo”) ignoriert werden. Der Speicherort und somit die genaue Definition des Mountpoints bleibt jedoch jedem selbst überlassen.
+Alternativ kann auch ein frei wählbares Verzeichnis im eigenen Benutzer-Home-Ordner verwendet werden, wie z.B. 
+
+    mkdir -p /home/[BENUTZERNAME]/Netzlaufwerke/[SERVERNAME]
+    
+In diesem Fall kann beim Erstellen des Verzeichnisses die Root-Berechtigung (ein vorangestelltes „sudo”) ignoriert werden. Der Speicherort und somit die genaue Definition des Mountpoints bleibt jedoch jedem selbst überlassen. Im Folgenden wird beispielhaft das Systemverzeichnis „/media” verwendet. 
 
 ## Die Map-Datei
 Die eigentlichen SMB-Netzwerkfreigaben werden nun zeilenweise in eine Map-Datei eingetragen, deren Speicherort und Dateiname frei gewählt werden kann. Es empfiehlt sich jedoch, die Datei unter /etc mit dem Dateipräfix `auto.`, gefolgt vom Servernamen abzulegen, also z.B. `/etc/auto.mein-server`. Führe alle nachfolgenden Befehle als `root` aus.
@@ -67,16 +73,24 @@ Die eigentlichen SMB-Netzwerkfreigaben werden nun zeilenweise in eine Map-Datei 
 
 - Bitte ersetze die folgenden [PLATZHALTER] durch deine eigenen Angaben. Als [NAME-DER-FREIGABE] ist ein eindeutiger Name zu verwenden, der sich vom tatsächlichen Namen der Freigabe unterscheiden kann, aber Aufschluss über die einzubindende Freigabe gibt. Bei einer SMB-Freigabe enthält der Platzhalter [WEITERE-OPTIONEN] neben der, durch Komma getrennten `uid` und ggf. `gid` des Benutzers, Informationen über den Speicherort der `.smbcredentials`. Zusätzlich muss die IP-Adresse [IP-ADRESSE], der Pfad und der Name des freigegebenen Ordners [PFAD-UND-NAME-DER-FREIGABE] des Servers angegeben werden.
 
-  ***Syntax:*** [NAME-DER-FREIGABE] -fstype=cifs,[WEITERE-OPTIONEN] ://[IP-ADRESSE]/[PFAD-UND-NAME-DER-FREIGABE]
+    ***Syntax:***
+  
+      [NAME-DER-FREIGABE] -fstype=cifs,[WEITERE-OPTIONEN] ://[IP-ADRESSE]/[PFAD-UND-NAME-DER-FREIGABE]
 
-      [FREIGABE-NAME] -fstype=cifs,uid=1000,credentials=/home/[BENUTZERNAME]/.smbcredentials ://[IP-ADRESSE]/[FREIGABE-PFAD]
+    ***Beispiel:***
+  
+      Dokumente -fstype=cifs,uid=1000,credentials=/home/tommes/.smbcredentials ://172.16.1.10/Dokumente
 
 ## Die Master-Map-Datei
 In der Map-Master-Datei, die bereits während der Installation von Autofs unter `/etc/auto.master` angelegt wurde, wird der oben definierte Mountpoint mit der Map-Datei verknüpft, in der bereits die Verbindungsinformationen der einzelnen Freigaben gespeichert wurden. In der Regel sollte die Map-Master-Datei noch keine Daten enthalten, andernfalls sind die folgenden Einträge am Ende der Datei `/etc/auto.master` einzufügen.
 
-***Syntax:*** [PFAD-UND-NAME-DES-MOUNTPOINTS] [PFAD-UND-NAME-DER-MAP-DATEI] [WEITERE-OPTIONEN]
+***Syntax:***
 
-    /media/[BENUTZERNAME]/[SERVERNAME] /etc/auto.[SERVERNAME] --timeout=[SEKUNDEN] --ghost
+    [PFAD-UND-NAME-DES-MOUNTPOINTS] [PFAD-UND-NAME-DER-MAP-DATEI] [WEITERE-OPTIONEN]
+
+***Beispiel:*** 
+
+    /media/tommes/Fileserver /etc/auto.Fileserver --timeout=0 --ghost
 
 Die Option `--timeout` gibt an, nach welcher Zeit die Freigabe wieder ausgehängt werden soll. Standardmäßig wird ein Wert von 300 Sekunden (entspricht 5 Minuten) empfohlen. Wird der Wert 0 eingegeben, wird die Freigabe nicht automatisch ausgehängt.
 
