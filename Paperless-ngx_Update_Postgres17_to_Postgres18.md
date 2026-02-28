@@ -142,7 +142,7 @@ Spiele nun das zuvor angelegte PostgreSQL 17 Datenbank-Backup (Dump) zurück.
 
 **Syntax:**
 ```
-sudo docker exec -i [POSTGRES_CONTAINER_NAME] psql -U [POSTGRES_USERNAME] -d [POSTGRES_PASSWORD] < backup.sql
+sudo docker exec -i [POSTGRES_CONTAINER_NAME] psql -U [POSTGRES_USERNAME] -d [POSTGRES_DB_NAME] < backup.sql
 ```
 
 **Beispiel:**
