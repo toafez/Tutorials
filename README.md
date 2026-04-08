@@ -10,8 +10,11 @@
 - [SMB-Netzwerkfreigaben mit Autofs auf einer Debian-basierten Linux-Distribution](https://github.com/toafez/Tutorials/blob/main/SMB-Freigaben_mit_Autofs.md)
 
 ### UGREEN-NAS
-- #### Docker
+- #### Docker / Paperless-ngx
   - [Paperless-ngx mit Redis und PostgreSQL](Docker-Compose_Paperless-ngx_Redis_PostgreSQL.yaml)
   - [Paperless-ngx mit Redis,Tika, Gotenberg und PostgreSQL](https://github.com/toafez/Tutorials/blob/main/Docker-Compose_Paperless-ngx_Redis_Tika_Gotenberg_PostgreSQL.yaml)
   - [Paperless-ngx Backup-Script](https://github.com/toafez/Paperless-ngx-Backup-Script)
   - [Paperless-ngx: Update der PostgreSQL-Datenbank von Version 17 auf Version 18](Paperless-ngx_Update_Postgres17_to_Postgres18.md) 
+
+- #### Docker / Joplin-Server
+  - [Joplin-Server mit Redis und PostgreSQL](Docker-Compose_Joplin-Server_Redis_PostgreSQL.yaml)
