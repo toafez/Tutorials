@@ -17,4 +17,5 @@
   - [Paperless-ngx: Update der PostgreSQL-Datenbank von Version 17 auf Version 18](Paperless-ngx_Update_Postgres17_to_Postgres18.md) 
 
 - #### Docker / Joplin-Server
+  - [Joplin-Server mit PostgreSQL](Docker-Compose_Joplin-Server_PostgreSQL.yaml)
   - [Joplin-Server mit Redis und PostgreSQL](Docker-Compose_Joplin-Server_Redis_PostgreSQL.yaml)

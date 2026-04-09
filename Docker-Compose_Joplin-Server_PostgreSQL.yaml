@@ -1,0 +1,123 @@
+# Joplin Server inklusive Redis und PostgreSQL
+# YAML-Dateiversion: 1.00 vom 09.04.2026
+
+# Erstelle einen Ordner namens "joplin" im Docker-Verzeichnis. 
+# Wechsel in diesen Ordner und erstelle den folgenden Unterordner: 
+# pgdata
+#
+# Die endgültige Verzeichnisstruktur sollte wie folgt aussehen:
+# /volume1
+#   /docker
+#     /joplin
+#       /pgdata
+#
+# Passe vor dem Deployen in jedem Fall die weiter unten unter
+# APP_BASE_URL festgelegte IPv4-Adresse inkl. Port an.
+#
+# Gib nach dem Deployen die eben festgelegte IPv4-Adresse inkl. Port 
+# in die Adressleiste deines Browsers ein.
+
+
+# Melde dich am Joplin-Server mit der Default-Login-Vorgabe an
+#  - E-Mail    : admin@localhost
+#  - Password  : admin
+#
+# Admin Passwort ändern
+# - Änder nach dem Login das Passwort für den Admin-User über den Link "Change it now"
+#
+# Neuen Benutzer anlegen
+# - Erstelle über Admin > Users > Add user einen neuen Benutzer
+# - Öffne über Admin > Emails die E-Mail an den eben erstellten Benutzer mit dem Betreff
+#   "Your new Joplin Server account is almost ready to use"
+# - Klicke in der geöffneten E-Mail auf den Link "Complete your account"
+# - Log dich aus und melde dich mit dem grade erstellten Benutzer an.
+# - Prüfe, ob dir nach dem Login die Meldung "Your email has been confirmed" angezeigt wird.
+# - Verwende zukünftig diesen oder einen vergleichbaren Benutzer-Account, um dich über die 
+#   Client-App mit dem Joplin-Server zu verbinden. Verwende das Administratorkonto
+#   ausschließlich für administrative Zwecke.
+
+services:
+
+# PostgreSQL 16 Container
+  db:
+    image: docker.io/library/postgres:16
+    container_name: Joplin-PostgreSQL
+    restart: unless-stopped
+
+    # Sicherheitsoptionen
+    security_opt:
+      - no-new-privileges:true
+
+    # Gesundheitscheck
+    healthcheck:
+      #                                     Datenbankname | Datenbankbenutzer
+      test: ["CMD", "pg_isready", "-q", "-d", "joplin", "-U", "joplin"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+    # Speicherort persistenter Daten (Pfad vor dem Doppelpunkt nach Bedarf anpassen)
+    volumes:
+      - /volume1/docker/joplin/pgdata:/var/lib/postgresql/data:rw
+
+    # Umgebungsvariablen
+    environment:
+      # Datenbankname (nach Bedarf anpassen)
+      POSTGRES_DB: joplin
+      # Datenbankbenutzer (nach Bedarf anpassen)
+      POSTGRES_USER: joplin
+      # Datenbankpasswort (nach Bedarf anpassen)
+      POSTGRES_PASSWORD: joplin
+      # Zeitzone
+      TZ: "Europe/Berlin"
+
+# Joplin Container
+  joplin:
+    image: joplin/server:latest
+    container_name: Joplin
+    restart: unless-stopped
+
+    # Sicherheitsoptionen
+    security_opt:
+      - no-new-privileges:true
+
+    # Gesundheitscheck
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sSf http://localhost:22300/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+    # Startreihenfolge vor dem Start des aktuellen Dienstes festlegen
+    depends_on:
+      - db
+
+    # Weiterleitungsport
+    ports:
+      - "22300:22300"
+
+    # Umgebungsvariablen
+    environment:
+      # Joplin Port
+      APP_PORT: "22300"
+      # Lokale IPv4 Adresse und Port über den Joplin erreichbar sein soll
+      APP_BASE_URL: "http://192.168.178.10:22300"
+
+      # Umgebungsvariablen für den PostgreSQL-Container festlegen
+      DB_CLIENT: "pg"
+      # Datenbankname
+      POSTGRES_DATABASE: "joplin"
+      # Datenbankbenutzer
+      POSTGRES_USER: "joplin"
+      # Datenbankpasswort
+      POSTGRES_PASSWORD: "joplin"
+      # Datenbankport
+      POSTGRES_PORT: "5432"
+      # Host- bzw. Servicename des PostgreSQL-Containers
+      POSTGRES_HOST: "db"
+
+      # Optionale SMTP Einstellungen zum versenden von E-Mails
+      # SMTP_HOST: "smtp.example.com"
+      # SMTP_PORT: "587"
+      # SMTP_USER: "user"
+      # SMTP_PASSWORD: "pass"
