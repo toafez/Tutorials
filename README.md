@@ -19,3 +19,6 @@
 - #### Docker / Joplin-Server
   - [Joplin-Server mit PostgreSQL](Docker-Compose_Joplin-Server_PostgreSQL.yaml)
   - [Joplin-Server mit Redis und PostgreSQL](Docker-Compose_Joplin-Server_Redis_PostgreSQL.yaml)
+  
+- #### Docker / PhotoPrism
+  - [PhotoPrism mit MariaDB](Docker-Compose_PhotoPrism_MariaDB.yaml)

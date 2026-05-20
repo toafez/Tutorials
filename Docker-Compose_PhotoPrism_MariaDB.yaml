@@ -1,0 +1,113 @@
+# PhotoPrism:latest inklusive MariaDB 11
+# YAML-Dateiversion: 1.00 vom 20.05.2026
+
+# Erstelle  einen Ordner namens "photoprism” im Docker-Verzeichnis. 
+# Wechsel in diesen Ordner und erstelle die folgenden Unterordner: 
+# database, import, originals und storage
+#
+# Die endgültige Verzeichnisstruktur sollte wie folgt aussehen:
+# /volume1
+#   /docker
+#     /photoprism
+#       /database
+#       /import
+#       /originals
+#       /storage
+
+services:
+
+# MariaDB Container
+  mariadb:
+    image: mariadb:11
+    container_name: PhotoPrism-MariaDB
+    restart: unless-stopped
+    stop_grace_period: 15s
+
+    # Sicherheitsoptionen (Siehe https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239)
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+
+    # Startbefehl des MariaDB Containers setzen bzw. ersetzen
+    command: >
+      --innodb-buffer-pool-size=512M
+      --transaction-isolation=READ-COMMITTED
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --max-connections=512
+      --innodb-rollback-on-timeout=OFF
+      --innodb-lock-wait-timeout=120
+  
+    # Speicherorte persistenter Daten (Pfade vor dem Doppelpunkt nach Bedarf anpassen)
+    volumes:
+      - "/volume1/docker/photoprism/database:/var/lib/mysql"
+
+    # Umgebungsvariablen (Siehe https://link.photoprism.app/mariadb-enviconment-variables)
+    environment:
+      MARIADB_DATABASE: "photoprism"
+      MARIADB_USER: "photoprism"
+      MARIADB_PASSWORD: "insecure"
+      MARIADB_ROOT_PASSWORD: "insecure"
+
+# PhotoPrism Container
+  photoprism:
+    image: photoprism/photoprism:latest
+    container_name: PhotoPrism
+    restart: unless-stopped
+    stop_grace_period: 15s
+
+    # Startreihenfolge vor dem Start des aktuellen Dienstes festlegen
+    depends_on:
+      - mariadb
+
+    # Sicherheitsoptionen
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+
+    # Weiterleitungsport
+    ports:
+      - "2342:2342"
+
+    working_dir: "/photoprism"                       # Nicht ändern oder entfernen
+
+    # Speicherorte persistenter Daten (Pfade vor dem Doppelpunkt nach Bedarf anpassen)
+    volumes:
+        # Original-Mediendateien
+      - "/volume1/docker/photoprism/originals:/photoprism/originals"
+        # Optionaler Basisordner, aus dem Dateien in den Ordner /originals importiert werden können
+      - "/volume1/docker/photoprism/import:/photoprism/import"
+        # Beschreibbarer Speicherordner für Cache- und Sidecar-Dateien
+      - "/volume1/docker/photoprism/storage:/photoprism/storage"
+      # Beschreibbarer Speicherordner für MariaDB Datenbankinhalte
+      - "/volume1/docker/photoprism/database:/photoprism/database"
+
+    # Umgebungsvariablen (Siehe https://docs.photoprism.app/getting-started/config-options)
+    environment:
+      # Authentication
+      PHOTOPRISM_UID: 1000                           # Benutzer-ID des berechtigten Docker-Systembenutzers (nach Bedarf anpassen)
+      PHOTOPRISM_GID: 10                             # Gruppen-ID des berechtigten Docker-Systembenutzers (nach Bedarf anpassen)
+      PHOTOPRISM_ADMIN_USER: "admin"                 # Benutzername des Admin-Kontos, das beim ersten Start erstellt wird
+      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # Passwort des Admin-Kontos (8–72 Zeichen)
+
+      # Customization
+      PHOTOPRISM_DEFAULT_LOCALE: "de"                # Standard-Sprache der Benutzeroberfläche, z. B. "en" oder "de"
+      PHOTOPRISM_PLACES_LOCALE: "de"                 # Angaben zum Standort, z. B. "lokal", "en" oder "de"
+      PHOTOPRISM_DEFAULT_TIMEZONE: "Europe/Berlin"   # Standardzeitzone, z. B. für die Planung von Backups
+
+      # Database
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"            # MariaDB 11 (Nachfolger von MySQL)
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # Datenbank Server (hostname:port)
+      PHOTOPRISM_DATABASE_NAME: "photoprism"         # Datenbankname (entspricht der Variablen "MARIADB_DATABASE" des Dienstes "mariadb")
+      PHOTOPRISM_DATABASE_USER: "photoprism"         # Benutzername (entspricht der Variablen "MARIADB_USER" des Dienstes "mariadb")
+      PHOTOPRISM_DATABASE_PASSWORD: "insecure"       # Passwort (entspricht der Variablen "MARIADB_PASSWORD" des Dienstes "mariadb")
+
+      # Site / Network
+      PHOTOPRISM_SITE_TITLE: "PhotoPrism"            # Seitentitel
+      PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # Server URL im Format "http(s)://domain.name(:port)/(path)"
+
+      # Logging
+      PHOTOPRISM_LOG_LEVEL: "info"                   # Ausführlichkeitsstufe der Protokollmeldungen (trace, debug, info, warning, error)
+
+      # Storage
+      PHOTOPRISM_STORAGE_PATH: /photoprism/storage   # Nicht ändern oder entfernen
