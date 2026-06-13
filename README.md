@@ -25,4 +25,3 @@
   
 - #### Docker / Immich
   - [Immich mit Machine-Learning, Redis und PostgreSQL](Docker-Compose_Immich_Machine-Learning_Redis_PostgreSQL.yaml)
-  - 
