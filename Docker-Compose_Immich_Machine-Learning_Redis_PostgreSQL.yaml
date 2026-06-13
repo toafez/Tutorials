@@ -1,0 +1,150 @@
+# Immich:release inklusive Machine-Learning, Redis und PostgreSQL
+# YAML-Dateiversion: 1.00 vom 13.06.2026
+
+# Erstelle  einen Ordner namens „immich” im Docker-Verzeichnis. 
+# Wechsel in diesen Ordner und erstelle die folgenden Unterordner: 
+# cache, pgdata und upload.
+#
+# Die endgültige Verzeichnisstruktur sollte wie folgt aussehen:
+# /volume2
+#   /docker
+#     /immich
+#       /cache
+#       /pgdata
+#       /upload
+
+# Passe im Docker Compose bei Bedarf die Benutzer- und Gruppen-ID,
+# die Speicherorte persistenter Daten, die Portmappings, den Namen,
+# das Passwort und den Datenbanknamen von PostgreSQL sowie weitere
+# Einstellungen an.
+
+services:
+
+# Servicename
+  immich-server:
+
+    # Containerimage
+    image: ghcr.io/immich-app/immich-server:release
+
+    # Containername
+    container_name: Immich-Server
+
+    # Neustartbedingungen sowie Verhalten nach Fehlern oder Daemon-Neustart
+    restart: unless-stopped
+
+    # Speicherorte persistenter Daten (Pfade vor dem Doppelpunkt nach Bedarf anpassen)
+    volumes:
+      - /volume2/docker/immich/upload:/data:rw
+      - /etc/localtime:/etc/localtime:ro
+
+    # Benutzer- und Gruppen-ID des berechtigten Docker-Systembenutzers
+    user: "1000:10"
+
+    # Portmapping vom Host in den Container
+    ports:
+      - "2283:2283"
+
+    # Festlegung der Reihenfolge und Ausführung weiterer Dienste-Abhängigkeiten
+    depends_on:
+      - redis
+      - database
+
+    # Umgebungsvariablen für den Container
+    environment:
+      DB_USERNAME: immich
+      DB_PASSWORD: immichpwd
+      DB_DATABASE_NAME: immich
+
+    # Funktions- und Bereitschaftstest für den Container
+    healthcheck:
+      disable: false
+
+# Servicename
+  immich-machine-learning:
+
+    # Containerimage
+    image: ghcr.io/immich-app/immich-machine-learning:release
+
+    # Containername
+    container_name: Immich-Machine-learning
+
+    # Neustartbedingungen sowie Verhalten nach Fehlern oder Daemon-Neustart
+    restart: unless-stopped
+
+    # Speicherorte persistenter Daten (Pfade vor dem Doppelpunkt nach Bedarf anpassen)
+    volumes:
+      - /volume2/docker/immich/cache:/cache:rw
+
+    # Benutzer- und Gruppen-ID des berechtigten Docker-Systembenutzers
+    user: "1000:10"
+
+    # Portmapping vom Host in den Container
+    ports:
+      - "3003:3003"
+
+    # Funktions- und Bereitschaftstest für den Container
+    healthcheck:
+      disable: false
+
+# Servicename
+  redis:
+
+    # Containerimage
+    image: docker.io/valkey/valkey:9
+
+    # Containername
+    container_name: Immich-Redis
+
+    # Neustartbedingungen sowie Verhalten nach Fehlern oder Daemon-Neustart
+    restart: unless-stopped
+
+    # Benutzer- und Gruppen-ID des berechtigten Docker-Systembenutzers
+    user: "1000:10"
+
+    # Portmapping vom Host in den Container
+    ports:
+       - "6379:6379"
+
+    # Funktions- und Bereitschaftstest für den Container
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+# PostgreSQL Container
+  database:
+
+    # Containerimage
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0
+
+    # Containername
+    container_name: Immich-PostgreSQL
+
+    # Neustartbedingungen sowie Verhalten nach Fehlern oder Daemon-Neustart
+    restart: unless-stopped
+
+    # Umgebungsvariablen für den Container
+    environment:
+      POSTGRES_DB: immich
+      POSTGRES_USER: immich
+      POSTGRES_PASSWORD: immichpwd
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+
+    # Speicherort persistenter Daten (Pfad vor dem Doppelpunkt nach Bedarf anpassen)
+    volumes:
+      - /volume2/docker/immich/pgdata:/var/lib/postgresql/data:rw
+
+    # Weiterleitungsport
+    ports:
+      - "5432:5432"
+
+    # Funktions- und Bereitschaftstest für den Container
+    healthcheck:
+      disable: false
+
+    # Gemeinsamer, schneller Arbeitsspeicher für Datenbank- und Bildbearbeitungsprozesse (shm = Shared Memory)
+    shm_size: 128mb
+    
+volumes:
+  model-cache:

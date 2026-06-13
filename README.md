@@ -22,3 +22,7 @@
   
 - #### Docker / PhotoPrism
   - [PhotoPrism mit MariaDB](Docker-Compose_PhotoPrism_MariaDB.yaml)
+  
+- #### Docker / Immich
+  - [Immich mit Machine-Learning, Redis und PostgreSQL](Docker-Compose_Immich_Machine-Learning_Redis_PostgreSQL.yaml)
+  - 
