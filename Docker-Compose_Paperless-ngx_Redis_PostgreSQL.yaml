@@ -1,5 +1,5 @@
 # Paperless-ngx:latest inklusive Redis 8 und PostgreSQL 18
-# YAML-Dateiversion: 1.20 vom 23.10.2025
+# YAML-Dateiversion: 1.30 vom 24.07.2026
 # Fix: Set the internal volume path of PostgreSQL from /var/lib/postgresql/18/data to /var/lib/postgresql/18/docker
 
 # Erstelle  einen Ordner namens "paperless-nxg" im Docker-Verzeichnis. 
@@ -118,6 +118,8 @@ services:
       PAPERLESS_REDIS: redis://broker:6379
 
       # Umgebungsvariablen für PostgreSQL festlegen
+      # Festlegung der verwendeten Datenbank-Engine. Zulässige Werte sind „sqlite“, „postgresql“ und „mariadb“.
+      PAPERLESS_DBENGINE: postgresql
       # Hostname des PostgreSQL-Containers (entspricht der Variablen "hostname" im Abschnitt "db")
       PAPERLESS_DBHOST: paperless-postgres-db
       # Datenbankname (entspricht der Variablen "POSTGRES_DB")
@@ -136,30 +138,25 @@ services:
       PAPERLESS_ADMIN_USER: BENUTZERNAME
       # Passwort des Paperless-ngx Benutzers (nach Bedarf anpassen)
       PAPERLESS_ADMIN_PASSWORD: BENUTZER-PASSWORT
-
+      # Für den Sitzungstoken und die Signierung ist ein eindeutiger, mindestens 64 Zeichen langer, geheimer Schlüssel erforderlich.
+      # Die Generierung kann beispielsweise über die Linux-Kommandozeile mithilfe des folgenden Befehls erfolgen.
+      # python3 -c "import secrets; print(secrets.token_urlsafe(64))"
+      PAPERLESS_SECRET_KEY: change-me
       # Zeitzone (nach Bedarf anpassen)
       PAPERLESS_TIME_ZONE: Europe/Berlin
-
       # OCR-Sprache (nach Bedarf anpassen)
       PAPERLESS_OCR_LANGUAGE: deu+eng
-
       # Standard-OCR-Dateinamenformat (nach Bedarf anpassen)
       PAPERLESS_FILENAME_FORMAT: '{{ correspondent }}/{{ document_type }}/{{ created_year }}-{{ created_month }}-{{ created_day }}_{{ title }}'
-
       # Entferne alle Platzhalter, die als "none" aufgelöst wurden.
       PAPERLESS_FILENAME_FORMAT_REMOVE_NONE: true
-
       # Überprüfen, ob der Dateiname ein gültiges Datum (YYYY-MM-DD) enthält. Ist dies der Fall, wird dieses anstelle des Datums im Dokument verwendet.
       PAPERLESS_FILENAME_DATE_ORDER: YMD
-
       # Entferne alle doppelten Dateien aus dem Ordner "Consume"
       PAPERLESS_CONSUMER_DELETE_DUPLICATES: true
-
       # Dateien in Unterordnern des Consumeordners erfassen
       PAPERLESS_CONSUMER_RECURSIVE: true
-
       # Ignoriere ein oder mehrere durch Kommas getrennte Datumsangaben in den Dokumenten
       PAPERLESS_IGNORE_DATES: "1970-01-01"
-
       # Die digitale Signatur von PDF-Dokumenten ungültig machen, um die OCR-Verarbeitung zu ermöglichen
       PAPERLESS_OCR_USER_ARGS: '{"invalidate_digital_signatures": true}'

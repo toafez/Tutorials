@@ -1,5 +1,5 @@
 # Paperless-ngx inklusive Redis, Tika, Gotenberg und PostgreSQL
-# YAML-Dateiversion: 1.10 vom 16.11.2025
+# YAML-Dateiversion: 1.20 vom 24.07.2026
 # FIX: Gotenberg und Tika der Variablen depends_on: hinzugefügt.
 
 # Erstelle  einen Ordner namens "paperless-nxg" im Docker-Verzeichnis. 
@@ -151,6 +151,8 @@ services:
       PAPERLESS_REDIS: redis://broker:6379
 
       # Umgebungsvariablen für den PostgreSQL-Container festlegen
+      # Festlegung der verwendeten Datenbank-Engine. Zulässige Werte sind „sqlite“, „postgresql“ und „mariadb“.
+      PAPERLESS_DBENGINE: postgresql
       # Hostname des PostgreSQL-Containers (entspricht der Variablen "hostname" im Abschnitt services: -> db: )
       PAPERLESS_DBHOST: paperless-postgres-db
       # Datenbankname (entspricht der Variablen "POSTGRES_DB" im Abschnitt services: -> db: )
@@ -177,6 +179,10 @@ services:
       PAPERLESS_ADMIN_USER: admin-user
       # Passwort des Paperless-ngx Benutzers (nach Bedarf anpassen)
       PAPERLESS_ADMIN_PASSWORD: admin-password
+      # Für den Sitzungstoken und die Signierung ist ein eindeutiger, mindestens 64 Zeichen langer, geheimer Schlüssel erforderlich.
+      # Die Generierung kann beispielsweise über die Linux-Kommandozeile mithilfe des folgenden Befehls erfolgen.
+      # python3 -c "import secrets; print(secrets.token_urlsafe(64))"
+      PAPERLESS_SECRET_KEY: change-me
       # Zeitzone (nach Bedarf anpassen)
       PAPERLESS_TIME_ZONE: Europe/Berlin
       # OCR-Sprache (nach Bedarf anpassen)
