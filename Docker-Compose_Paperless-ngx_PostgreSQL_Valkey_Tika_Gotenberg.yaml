@@ -1,34 +1,93 @@
 # Paperless-ngx:latest inklusive PostgreSQL 18, Valkey 9, Tika 3.3.1.0, Gotenberg 8
-# YAML-Dateiversion: 1.30 vom 27.09.2026
+# YAML-Dateiversion: 1.50 vom 25.10.2026
 
 # CHANGELOG
-# - Redis 8 durch Valkey 9 ersetzt.
-# - Aufgrund einer inkompatiblen Änderung der REST-API von Tika 4.0.0 treten derzeit
-#   Probleme mit Paperless-ngx auf, insbesondere bei .eml- und Office-Dateien. Aus diesem
-#   Grund wird Tika auf die Version 3.3.1.0 festgelegt.
-# - Gotenberg verwendet ausschließlich die Major-Version 8. Updates erfolgen nur innerhalb
-#   dieser Hauptversion.
-# - Die Startreihenfolge der Services wurde so angepasst, dass der Webserver nicht mehr nur
-#   wartet, bis alle Container laufen, sondern auch, bis PostgreSQL und Valkey tatsächlich 
-#   erreichbar sind.
-# - Da der Healthcheck in der akuellen Paperless-ngx-Image-Definition bereits enthalten ist,
-#   wurde der Healthcheck für den webserver-Service aus der Docker-Compose entfernt.
+# - WARNUNG: Es ist dringend davon abzuraten, diesen Docker-Compose-Stack durch eine bereits installierte Stack-Version
+#   von Paperless-ngx zu ersetzen. Aufgrund der nachfolgenden Änderungen kann es sonst zu Datenverlust kommen.
+# - In diesem Docker-Compose-Stack wurde die ursprünglich reine Verwendung von Bind Mounts mit Named Volumes kombiniert.
+# - Durch die Verwendung von Named Volumes werden PostgreSQL-Datenbankinhalte und weitere Daten anderer Services nicht
+#   mehr persistent im Projektverzeichnis von Paperless-ngx gespeichert, sondern in einem von Docker lokal verwalteten
+#   Speicherpfad für Volumes abgelegt. Beachte hierzu auch die ALLGEMEINEN HINWEISE.
+# - Diesem Docker-Compose-Stack wurden ALLGEMEINE HINWEISE sowie INSTALLATIONSHINWEISE hinzugefügt.
+# - Der interne PostgreSQL-Pfad wurde von "/var/lib/postgresql/18/docker" nach "/var/lib/postgresql" umgestellt. 
 
-
-# Erstelle  einen Ordner namens „paperless-nxg” im Docker-Verzeichnis. 
-# Wechsel in diesen Ordner und erstelle die folgenden Unterordner: 
-# data, media, export, consume, pgdata und valkeydata.
+# ALLGEMEINE HINWEISE
 #
-# Die endgültige Verzeichnisstruktur sollte wie folgt aussehen:
-# /volume1
-#   /docker
-#     /paperless-ngx
-#       /consume
-#       /data
-#       /export
-#       /media
-#       /pgdata
-#       /valkeydata
+# - Named Volumes
+#   werden für interne Anwendungsoperationen wie Datenbanken (PostgreSQL, MariaDB etc.), automatisch verwaltete
+#   Konfigurationen oder sensible Anwendungsdaten verwendet, die von der Anwendung selbst erstellt und in einem von
+#   Docker lokal verwalteten Speicherpfad für Volumes (volumes storage path) persistent gespeichert werden. Sie bieten
+#   bessere Performance, Datenschutz und Portabilität, da die Daten nicht direkt auf dem Host-System einsehbar sind.
+#   Named Volumes werden sowohl im volumes:-Eintrag eines Services als Referenz als auch in der globalen
+#   volumes:-Sektion am Ende des Stacks als Definition konfiguriert. Wichtig zu erwähnen ist hierbei, dass ein 
+#   Named Volume keine Pfad-Präfixe wie ./ oder ../ enthalten darf.
+#
+#   Beispiel:
+#      - Referenz im Service "db": 
+#          db:
+#            volumes:
+#              - pgdata:/var/lib/postgresql:rw
+#
+#      - Definition in der globalen volumes:-Sektion:
+#        volumes:
+#          pgdata:
+#
+#   In normalen Docker-Umgebungen befindet sich der Speicherpfad für Named Volumes in der Regel unter
+#   /var/lib/docker/volumes/. Auf einem UGREEN-NAS mit UGOS Pro unter Verwendung der Docker-App liegt dieser Pfad
+#   jedoch unter /volume[X]/@docker/volumes/. Eine Übersicht aller vorhandenen Volumes erhält man durch den Befehl:
+#   sudo docker volume ls
+#
+#   Detaillierte Informationen zu einem bestimmten Volume inklusive des tatsächlichen Mountpfades zeigt der Befehl:
+#   sudo docker volume inspect [VOLUME_NAME]
+#
+#   Nachdem der zugehörige Container bzw. das Projekt gestoppt und aus der Docker-App vollständig gelöscht wurde, 
+#   kann ein Named Volume mit folgendem Befehl gelöscht werden.
+#   sudo docker volume rm [VOLUME_NAME]
+#
+# - Bind Mounts
+#   beziehen sich auf unmittelbar erreichbare Pfade des Host-Systems, auf die der Nutzer direkt zugreifen muss, wie
+#   beispielsweise persönliche Daten, Konfigurationsdateien oder Backups. Die Pfade müssen dabei entweder relativ zum
+#   Ort des Projektverzeichnisses oder absolut angegeben werden. Diese Pfade werden nur als Referenz im volumes:-Eintrag
+#   des Services angegeben und erfordern keine globale Definition in der volumes:-Sektion am Ende des Stacks.
+#
+#   - Relative Pfadangabe bezogen auf das beispielhaft genannte Projektverzeichnis "/volume1/docker/project"
+#      volumes:
+#         - ./data:/app/data:rw
+#           (Der absolute Pfad entspricht in diesem Beispiel "/volume1/docker/project/data")
+#         - ../../backup/project:/app/data/export:rw
+#           (Der absolute Pfad entspricht in diesem Beispiel "/volume1/backup/project")
+#
+#   - Absolute Pfadangabe:
+#      volumes:
+#         - /volume1/docker/project/data:/app/data:rw
+#         - /volume1/backup/project:/app/data/export:rw
+
+# INSTALLATION
+# - Erstelle  ein neues, leeres Projektverzeichnis mit dem Namen „paperless-nxg” im Arbeitsverzeichnis von Docker
+#   wie beispielsweise "/volume1/docker/paperless-ngx".
+# - Wechsle in das eben erstellte Projektverzeichnis und lege die Unterverzeichnisse "consume", "export" und "media" an.
+#   Du kannst "consume", "export" und "media" auch an anderen Speicherorten anlegen oder darauf verweisen, sofern diese
+#   erreichbar, lesbar und beschreibbar sind.
+# - Kopiere den Inhalt dieses Docker-Compose-Stacks in das Editorfenster der UGOS Pro Docker-App, Portainer etc. 
+#   und passe alle benutzerdefinierten Einstellungen im Stack entsprechend an.
+# - Ändere vor dem Deployment in jedem Fall die folgenden vorgegebenen Key-Value-Paare ab.
+#      POSTGRES_PASSWORD: paperless
+#      PAPERLESS_DBPASS: paperless
+#      PAPERLESS_ADMIN_USER: admin-user
+#      PAPERLESS_ADMIN_PASSWORD: admin-password
+#      PAPERLESS_SECRET_KEY: change-me
+# - Führe die Installation von Paperless-ngx aus, indem du das Projekt bereitstellst bzw. deployst.
+#
+# - Die endgültige Verzeichnisstruktur sollte wie folgt aussehen:
+#    /volume[X]/docker/paperless-ngx/
+#    ├── consume/            (eingehende Dokumente)
+#    ├── export/             (exportierte Dokumente)
+#    ├── media/              (importierte Dokumente)
+#    └── docker-compose.yaml (wird nach erfolgreichem Deployen mit der UGOS Pro Docker-App erstellt)
+#
+#   HINWEIS: In diesem Stack wird der Ordner "media" bewusst als Bind Mount eingebunden. Zum Schutz der persönlichen
+#            Daten kann dieser Ordner alternativ auch so deklariert werden, wie es im Original-Docker-Compose-Stack
+#            von Paperless-ngx vorgesehen ist, d. h. als Named Volume (wie unter ALLGEMEINE HINWEISE beschrieben). 
 
 services:
 
@@ -44,9 +103,11 @@ services:
     security_opt:
       - no-new-privileges:true
 
-    # Speicherort persistenter Daten (Pfad vor dem Doppelpunkt nach Bedarf anpassen)
+    # Named Volumes bzw. Bind Mounts Speicherorte 
+    # (Bei Verwendung von Bind Mounts einen relativen oder absoluten Pfad vor dem Doppelpunkt eintragen,
+    # ansonsten nur einen Referenznamen für den volumes:-Service angeben.)
     volumes:
-      - /volume1/docker/paperless-ngx/valkeydata:/data:rw
+      - valkeydata:/data:rw
 
     # Gesundheitscheck des Valkey-Containers
     healthcheck:
@@ -69,9 +130,11 @@ services:
     security_opt:
       - no-new-privileges:true
 
-   # Speicherort persistenter Daten (Pfad vor dem Doppelpunkt nach Bedarf anpassen)
+    # Named Volumes bzw. Bind Mounts Speicherorte 
+    # (Bei Verwendung von Bind Mounts einen relativen oder absoluten Pfad vor dem Doppelpunkt eintragen,
+    # ansonsten nur einen Referenznamen für den volumes:-Service angeben.)
     volumes:
-      - /volume1/docker/paperless-ngx/pgdata:/var/lib/postgresql/18/docker:rw
+      - pgdata:/var/lib/postgresql:rw
 
     # Umgebungsvariablen
     environment:
@@ -152,12 +215,14 @@ services:
     # Gesundheitscheck des Paperless-ngx-Containers
     # In der aktuellen Paperless-ngx-Image-Definition ist der Healthcheck bereits standardmäßig enthalten.
 
-    # Speicherorte persistenter Daten (Pfade vor dem Doppelpunkt nach Bedarf anpassen)
+    # Named Volumes bzw. Bind Mounts Speicherorte 
+    # (Bei Verwendung von Bind Mounts einen relativen oder absoluten Pfad vor dem Doppelpunkt eintragen,
+    # ansonsten einen Referenznamen für den volumes:-Service sowie für die volumes:-Sektion angeben.)
     volumes:
-      - /volume1/docker/paperless-ngx/data:/usr/src/paperless/data:rw
-      - /volume1/docker/paperless-ngx/media:/usr/src/paperless/media:rw
-      - /volume1/docker/paperless-ngx/export:/usr/src/paperless/export:rw
-      - /volume1/docker/paperless-ngx/consume:/usr/src/paperless/consume:rw
+      - data:/usr/src/paperless/data:rw
+      - ./media:/usr/src/paperless/media:rw
+      - ./export:/usr/src/paperless/export:rw
+      - ./consume:/usr/src/paperless/consume:rw
 
     # Umgebungsvariablen
     environment:
@@ -171,7 +236,7 @@ services:
       PAPERLESS_DBNAME: paperless
       # Benutzername (entspricht der Variablen "POSTGRES_USER" des Dienstes "db")
       PAPERLESS_DBUSER: paperless
-      # Benutzername (entspricht der Variablen "POSTGRES_PASSWORD" des Dienstes "db")
+      # Datenbankpasswort (entspricht der Variablen "POSTGRES_PASSWORD" des Dienstes "db")
       PAPERLESS_DBPASS: paperless
 
       # Umgebungsvariablen für Valkey festlegen (Das hier die Bezeichnung redis verwendet wird ist korrekt!)
@@ -213,3 +278,9 @@ services:
       PAPERLESS_CONSUMER_RECURSIVE: true
       # Die digitale Signatur von PDF-Dokumenten ungültig machen, um die OCR-Verarbeitung zu ermöglichen
       PAPERLESS_OCR_USER_ARGS: '{"invalidate_digital_signatures": true}'
+
+# volumes:-Sektion in der alle verwendeten Volumes dieses Stacks definiert werden
+volumes:
+    data:
+    pgdata:
+    valkeydata:
